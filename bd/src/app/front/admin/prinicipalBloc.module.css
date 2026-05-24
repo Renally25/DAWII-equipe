@@ -1,0 +1,190 @@
+.principalBloc{
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+}
+
+.input{
+    display: flex;
+    background-color: #fafafa;
+    border-color: #644c10;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 15px;
+    padding: 5px;
+}
+.button{
+    display: flex;
+    background-color: #D5CDB8;
+    border-color: #644c10;
+    border-width: 2px;
+    border-style: solid;
+    padding: 10px;
+    width: 100px;
+    align-self: center;
+    margin-top: 20px;
+    border-radius: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.formulario{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    width: 50%;
+    height: 450px;
+    background-color: #D5CDB8;
+    align-items: center;
+    box-shadow: 2px 2px 5px black;
+    padding: 20px;
+    width: 300px;
+    border-radius: 15px;
+    margin: 30px auto;
+}
+
+.containerUsers{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    width: 50%;
+    background-color: #D5CDB8;
+    box-shadow: 2px 2px 5px black;
+    padding: 20px;
+    width: 300px;
+    border-radius: 15px;
+    margin: 30px auto;
+}
+
+.users{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background-color: #fafafa;
+    border-radius: 15px;
+}
+
+.principalBloc{
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+}
+
+.input{
+    display: flex;
+    background-color: #fafafa;
+    border-color: #644c10;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 15px;
+    padding: 5px;
+}
+.button{
+    display: flex;
+    background-color: #D5CDB8;
+    border-color: #644c10;
+    border-width: 2px;
+    border-style: solid;
+    padding: 10px;
+    width: 100px;
+    align-self: center;
+    margin-top: 20px;
+    border-radius: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.formulario{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    width: 300px;
+    height: 500px;
+    background-color: #D5CDB8;
+    align-items: center;
+    box-shadow: 2px 2px 5px black;
+    padding: 20px;
+    border-radius: 15px;
+    margin: 30px auto;
+}
+
+.containerUsers{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    width: 50%;
+    background-color: #D5CDB8;
+    box-shadow: 2px 2px 5px black;
+    padding: 20px;
+    width: 300px;
+    border-radius: 15px;
+    margin: 30px auto;
+}
+
+.users{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background-color: #fafafa;
+    border-radius: 15px;
+    margin-bottom: 12px;
+}
+
+.topoCard{
+    display: flex;
+    flex-direction: row;
+    align-self: flex-end;
+    align-items: center;
+    justify-content: center;
+    background-color: #656c47;
+    padding: 5px;
+    border-radius: 10px;
+    color: #fafafa;
+    width: fit-content;
+    font-size: 12px;
+}
+
+.areaButtons{
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.editButton{
+    border: none;
+    background-color: #656c47;
+    color: white;
+
+    padding: 8px 12px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.deleteButton{
+    border: none;
+    background-color: #a63d3d;
+    color: white;
+
+    padding: 8px 12px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.scrollUsers{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 5px;
+}

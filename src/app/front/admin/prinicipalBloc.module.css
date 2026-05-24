@@ -1,0 +1,158 @@
+.principalBloc{
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    background-color: #D5CDB8;
+}
+
+.input{
+    display: flex;
+    background-color: #fafafa;
+    border-color: #644c10;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 15px;
+    padding: 5px;
+}
+.button{
+    display: flex;
+    background-color: #454c3b;
+    border-color: #454c3b;
+    color: #D5CDB8;                                   
+    border-width: 2px;
+    border-style: solid;
+    padding: 10px;
+    width: 200px;
+    margin: 20px auto 0;
+    border-radius: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.formulario{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    height: 550px;
+    background-color: #B4AA8E;
+    align-items: center;
+    box-shadow: 2px 2px 5px black;
+    width: 450px;
+    border-radius: 15px;
+    margin: 50px auto;
+}
+
+.containerUsers{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    background-color: #B4AA8E;
+    box-shadow: 2px 2px 5px black;
+    padding: 20px;
+    width: 450px;
+    border-radius: 15px;
+    margin: 50px auto;
+    height: 550px;
+}
+
+.users{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background-color: #fafafa;
+    border-radius: 15px;
+    margin-bottom: 12px;
+}
+
+.topoCard{
+    display: flex;
+    flex-direction: row;
+    align-self: flex-end;
+    align-items: center;
+    justify-content: center;
+    background-color: #656c47;
+    padding: 5px;
+    border-radius: 10px;
+    color: #fafafa;
+    width: fit-content;
+    font-size: 12px;
+}
+
+.areaButtons{
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.editButton{
+    border: none;
+    background-color: #656c47;
+    color: white;
+
+    padding: 8px 12px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.deleteButton{
+    border: none;
+    background-color: #a63d3d;
+    color: white;
+
+    padding: 8px 12px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.scrollUsers{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.camposInput {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 400px;
+}
+
+.container{
+    background-color: #D5CDB8;
+}
+
+.novoUsuario{
+    display: flex;
+    flex-direction: row;
+    border: none;
+    color: #454c3b;
+    height: 70px;
+    width: 230px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: 60px;
+    left: 220px;
+    gap: 10px;
+}
+
+.blocoTexto{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.titulo{
+    font-size: 20px;
+    font-weight: bold;
+}
