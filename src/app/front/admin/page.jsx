@@ -1,12 +1,13 @@
 "use client";
 
+
 import { useEffect, useState } from "react";
 import Header from "../header/header";
 import styles from "./prinicipalBloc.module.css";
 import Busca from "../barraDeBusca/busca";
 import { Trash2 } from "@deemlol/next-icons";
 import { Edit } from "@deemlol/next-icons";
-import { UserPlus } from "@deemlol/next-icons"
+import { UserPlus } from "@deemlol/next-icons";
 
 export default function Front() {
   const [inputBusca, setInputBusca] = useState("");
@@ -15,13 +16,23 @@ export default function Front() {
   return (
     <div className={styles.container}>
       <Header />
-      <NovoUsuario />
-      <Busca busca={inputBusca} setBusca={setInputBusca} onBuscar={setBusca} />
-
 
       <div className={styles.principalBloc}>
-        <Formulario />
-        <Usuarios filtro={busca} />
+        <div className={styles.principalBloc}>
+          <div className={styles.colunaFormulario}>
+            <NovoUsuario />
+            <Formulario />
+          </div>
+
+          <div className={styles.colunaUsuarios}>
+            <Busca
+              busca={inputBusca}
+              setBusca={setInputBusca}
+              onBuscar={setBusca}
+            />
+            <Usuarios filtro={busca} />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -43,13 +54,33 @@ export function Formulario() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [cpf, setCpf] = useState("");
-  const [endereco, setEndereco] = useState("");
+  const [cep, setCep] = useState("");
+  const [estado, setEstado] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [rua, setRua] = useState("");
+  const [numero, setNumero] = useState("");
   const [telefone, setTelefone] = useState("");
   const [tipo, setTipo] = useState("aluno-paciente");
+  const [crefito, setCrefito] = useState("");
+  const [crp, setCrp] = useState("");
+  const [cref, setCref] = useState("");
 
   async function handleSubmit(event) {
     event.preventDefault();
-    if (!nome || !email || !cpf || !endereco || !telefone || !tipo) {
+    if (
+      !nome ||
+      !email ||
+      !cpf ||
+      !cep ||
+      !estado ||
+      !cidade ||
+      !bairro ||
+      !rua ||
+      !numero ||
+      !telefone ||
+      !tipo
+    ) {
       alert("Preencha todos os campos");
       return;
     }
@@ -63,7 +94,12 @@ export function Formulario() {
         nome: nome,
         email: email,
         cpf: cpf,
-        endereco: endereco,
+        cep: cep,
+        estado: estado,
+        cidade: cidade,
+        bairro: bairro,
+        rua: rua,
+        numero: numero,
         telefone: telefone,
         tipoUsuario: tipo,
       }),
@@ -75,7 +111,12 @@ export function Formulario() {
       setNome("");
       setEmail("");
       setCpf("");
-      setEndereco("");
+      setCep("");
+      setEstado("");
+      setCidade("");
+      setBairro("");
+      setRua("");
+      setNumero("");
       setTelefone("");
       setTipo("aluno-paciente");
     } else {
@@ -85,81 +126,168 @@ export function Formulario() {
 
   return (
     <div className={styles.formulario}>
-        <form
-          action=""
-          onSubmit={(e) => {
-            handleSubmit(e);
-          }}
-        >
+      <form
+        action=""
+        onSubmit={(e) => {
+          handleSubmit(e);
+        }}
+      >
+        <div className={styles.camposInput}>
+          <label htmlFor="nome">Tipo: </label>
+          <select
+            className={styles.input}
+            name="tipo"
+            value={tipo}
+            onChange={(e) => setTipo(e.target.value)}
+          >
+            <option value="aluno-paciente">Aluno-paciente</option>
+            <option value="treinador">Treinador</option>
+            <option value="psicologo">Psicólogo</option>
+            <option value="fisioterapeuta">Fisioterapeuta</option>
+          </select>
+        </div>
+        <div className={styles.camposInput}>
+          <label htmlFor="nome">Nome: </label>
+          <input
+            className={styles.input}
+            name="nome"
+            type="text"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+          />
+        </div>
+        <div className={styles.camposInput}>
+          <label htmlFor="email">Email: </label>
+          <input
+            className={styles.input}
+            name="email"
+            type="text"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className={styles.camposInput}>
+          <label htmlFor="cpf">CPF: </label>
+          <input
+            className={styles.input}
+            name="cpf"
+            type="text"
+            value={cpf}
+            onChange={(e) => setCpf(e.target.value)}
+          />
+        </div>
+        <div className={styles.camposInput}>
+          <label htmlFor="cep">CEP: </label>
+          <input
+            className={styles.input}
+            name="cep"
+            type="text"
+            value={cep}
+            onChange={(e) => setCep(e.target.value)}
+          />
+        </div>
+        <div className={styles.camposInput}>
+          <label htmlFor="estado">Estado: </label>
+          <input
+            className={styles.input}
+            name="estado"
+            type="text"
+            value={estado}
+            onChange={(e) => setEstado(e.target.value)}
+          />
+        </div>
+        <div className={styles.camposInput}>
+          <label htmlFor="cidade">Cidade: </label>
+          <input
+            className={styles.input}
+            name="cidade"
+            type="text"
+            value={cidade}
+            onChange={(e) => setCidade(e.target.value)}
+          />
+        </div>
+        <div className={styles.camposInput}>
+          <label htmlFor="bairro">Bairro: </label>
+          <input
+            className={styles.input}
+            name="bairro"
+            type="text"
+            value={bairro}
+            onChange={(e) => setBairro(e.target.value)}
+          />
+        </div>
+        <div className={styles.camposInput}>
+          <label htmlFor="rua">Rua: </label>
+          <input
+            className={styles.input}
+            name="rua"
+            type="text"
+            value={rua}
+            onChange={(e) => setRua(e.target.value)}
+          />
+        </div>
+        <div className={styles.camposInput}>
+          <label htmlFor="numero">Número: </label>
+          <input
+            className={styles.input}
+            name="numero"
+            type="text"
+            value={numero}
+            onChange={(e) => setNumero(e.target.value)}
+          />
+        </div>
+
+        <div className={styles.camposInput}>
+          <label htmlFor="telefone">Telefone: </label>
+          <input
+            className={styles.input}
+            name="telefone"
+            type="text"
+            value={telefone}
+            onChange={(e) => setTelefone(e.target.value)}
+          />
+        </div>
+
+        {tipo === "treinador" && (
           <div className={styles.camposInput}>
-            <label htmlFor="nome">Tipo: </label>
-            <select
-              className={styles.input}
-              name="tipo"
-              value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
-            >
-              <option value="aluno-paciente">Aluno-paciente</option>
-              <option value="treinador">Treinador</option>
-              <option value="psicologo">Psicólogo</option>
-              <option value="fisioterapeuta">Fisioterapeuta</option>
-            </select>
-          </div>
-          <div className={styles.camposInput}>
-            <label htmlFor="nome">nome: </label>
+            <label>CREF:</label>
             <input
               className={styles.input}
-              name="nome"
               type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
+              value={cref}
+              onChange={(e) => setCref(e.target.value)}
             />
           </div>
+        )}
+
+        {tipo === "psicologo" && (
           <div className={styles.camposInput}>
-            <label htmlFor="email">email: </label>
+            <label>CRP:</label>
             <input
               className={styles.input}
-              name="email"
               type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={crp}
+              onChange={(e) => setCrp(e.target.value)}
             />
           </div>
+        )}
+
+        {tipo === "fisioterapeuta" && (
           <div className={styles.camposInput}>
-            <label htmlFor="cpf">cpf: </label>
+            <label>CREFITO:</label>
             <input
               className={styles.input}
-              name="cpf"
               type="text"
-              value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
+              value={crefito}
+              onChange={(e) => setCrefito(e.target.value)}
             />
           </div>
-          <div className={styles.camposInput}>
-            <label htmlFor="endereco">endereço: </label>
-            <input
-              className={styles.input}
-              name="endereco"
-              type="text"
-              value={endereco}
-              onChange={(e) => setEndereco(e.target.value)}
-            />
-          </div>
-          <div className={styles.camposInput}></div>
-          <div className={styles.camposInput}>
-            <label htmlFor="telefone">telefone: </label>
-            <input
-              className={styles.input}
-              name="telefone"
-              type="text"
-              value={telefone}
-              onChange={(e) => setTelefone(e.target.value)}
-            />
-          </div>
-          <button type="submit" className={styles.button}>
-            Enviar
-          </button>
-        </form>
+        )}
+
+        <button type="submit" className={styles.button}>
+          Enviar
+        </button>
+      </form>
     </div>
   );
 }
@@ -181,6 +309,7 @@ export function Usuarios({ filtro }) {
     pegarUsers();
   }, []); //[] = toda vez que a tela carregar
 
+
   const usuariosFiltrados = data.filter(
     (item) =>
       item.nome.toLowerCase().includes(filtro.toLowerCase()) ||
@@ -197,7 +326,6 @@ export function Usuarios({ filtro }) {
       <div className={styles.scrollUsers}>
         {usuariosFiltrados.map((item) => (
           <div key={item.codusuario} className={styles.users}>
-
             <div className={styles.topoCard}>
               <p>{item.tipousuario}</p>
             </div>
@@ -225,41 +353,42 @@ export function Usuarios({ filtro }) {
     </div>
   );
 
-async function deletarUsuario(codusuario) {
-  const result = await fetch(
-    `http://localhost:3000/api/Usuario?CodUsuario=${codusuario}`,
-    {
-      method: "DELETE",
-    },
-  );
+  async function deletarUsuario(codusuario) {
+    const result = await fetch(
+      `http://localhost:3000/api/Usuario?CodUsuario=${codusuario}`,
+      {
+        method: "DELETE",
+      },
+    );
 
-  if (result.ok) {
-    alert("Usuário deletado!");
+    if (result.ok) {
+      alert("Usuário deletado!");
+    }
   }
-}
 
-async function editarUsuario(usuario) { //aqui só tem a opção de editar o nome, mas depois pode ser expandida para os outros campos
-  const novoNome = prompt("Digite o novo nome:", usuario.nome);
+  async function editarUsuario(usuario) {
+    //aqui só tem a opção de editar o nome, mas depois pode ser expandida para os outros campos
+    const novoNome = prompt("Digite o novo nome:", usuario.nome);
 
-  if (!novoNome) return;
+    if (!novoNome) return;
 
-  const result = await fetch("http://localhost:3000/api/Usuario", {
-    method: "PUT",
+    const result = await fetch("http://localhost:3000/api/Usuario", {
+      method: "PUT",
 
-    headers: {
-      "Content-Type": "application/json",
-    },
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-    body: JSON.stringify({
-      codusuario: usuario.codusuario,
-      nome: novoNome,
-    }),
-  });
+      body: JSON.stringify({
+        codusuario: usuario.codusuario,
+        nome: novoNome,
+      }),
+    });
 
-  if (result.ok) {
-    alert("Usuário atualizado!"); //adicionar modal depois
+    if (result.ok) {
+      alert("Usuário atualizado!"); //adicionar modal depois
 
-    pegarUsers();
+      pegarUsers();
+    }
   }
-}
 }

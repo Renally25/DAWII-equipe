@@ -1,0 +1,55 @@
+.logo{
+    padding: 20px 0;
+    border-bottom: 1px solid #fafafa;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+
+.logoText{
+    color: #fafafa;
+    font-size: 14px;
+}
+
+.image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+}
+
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    height: 100vh;
+    background-color: #3b4231;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;  
+    gap: 15px;            
+}
+
+.menuItem {
+    margin-top: 10px;
+    background: none;
+    border: none;
+    color: #fafafa;
+    font-size: 18px;
+    text-align: left;        
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;            
+}
+
+.menuItem:hover {
+    background-color: #656c474d;
+}
+
+.config{
+    justify-content: flex-end;
+}

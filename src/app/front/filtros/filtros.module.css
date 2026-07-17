@@ -1,0 +1,14 @@
+.filtros {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.filtros select {
+  padding: 8px;
+  border-radius: 8px;
+    background-color:#656C474d;
+
+  border: 1px solid #656C47;
+  outline: none;
+}

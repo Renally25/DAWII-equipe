@@ -1,28 +1,33 @@
-.barraBusca{
+.barraBusca {
     display: flex;
-    justify-content: center;
-    margin-top: 20px;
+    gap: 15px;
+    background-color: #656c474d;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #656c47;
+    margin-bottom: 25px;
+    align-items: center;
 }
 
-.inputBusca{
-    height: 30px;
-    width: auto;
-    border-radius: 5px;
+.inputBusca {
+    flex: 1;
+    padding: 10px 15px;
     border: 1px solid #656c47;
-    padding: 5px;
-    font-size: 16px;
+    border-radius: 8px;
     outline: none;
+    height: 40px;
+    font-size: 14px;
+    box-sizing: border-box;
 }
-.buttonBusca{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #656c47;
-    border: none;
-    color: #fafafa;
-    padding: 5px 10px;
-    margin-left: 10px;
-    border-radius: 5px;
+
+.selectFiltro {
+    padding: 10px 15px;
+    border: 1px solid #D5CDB8;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    color: #3B4231;
     cursor: pointer;
-    height: 30px;
+    height: 40px;
+    font-size: 14px;
+    box-sizing: border-box;
 }

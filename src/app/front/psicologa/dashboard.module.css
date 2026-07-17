@@ -1,0 +1,36 @@
+.dashboard {
+    display: flex;
+    height: 100vh;           
+    background: #D5CDB8;
+    width: 100vw;           
+    overflow: hidden;        
+    box-sizing: border-box;
+}
+
+.wrapperPrincipal {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100%;          
+}
+
+.containerPrincipal {
+    flex: 1;                
+    padding: 30px;
+    display: flex;          
+    flex-direction: column;
+    overflow: hidden;       
+    box-sizing: border-box;
+}
+
+.conteudo {
+    flex: 1;                 
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 24px;
+    margin-top: 24px;
+    align-items: start;
+    overflow-y: auto;        
+    padding-right: 8px;    
+}

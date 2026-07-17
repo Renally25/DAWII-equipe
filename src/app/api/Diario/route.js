@@ -1,183 +1,100 @@
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
-import {
-  createDiarioSchema,
-  deleteDiarioSchema,
-  updateDiarioSchema,
-} from "@/lib/validators";
+import { DiarioSchema } from "@/lib/validators";
 
 export async function POST(requisicao) {
   try {
     const body = await requisicao.json();
 
-    const parsed = createDiarioSchema.safeParse(body);
+    console.log(body, "Dados recebidos");
+
+    const { descricao, humor, codusuario } = body;
+
+    const parsed = DiarioSchema.safeParse({
+      descricao,
+      humor,
+    });
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: parsed.error.flatten().fieldErrors },
-        { status: 400 }
+        {
+          errors: parsed.error.flatten().fieldErrors,
+        },
+        {
+          status: 400,
+        }
       );
     }
-
-    const { dataDiario, descricao, humor, notaTreino, CodUsuario } = parsed.data;
 
     const result = await pool.query(
-      `INSERT INTO Diario (dataDiario, descricao, humor, notaTreino, CodUsuario, ativo)
-       VALUES ($1, $2, $3, $4, $5, true)
-       RETURNING CodDiario`,
-      [dataDiario, descricao, humor, notaTreino, CodUsuario]
+      `INSERT INTO diario (
+        descricao,
+        humor,
+        codusuario
+      )
+      VALUES ($1, $2, $3)
+      RETURNING coddiario, datadiario`,
+      [descricao, humor, codusuario]
     );
 
     return NextResponse.json(
-      { message: "Diário registrado com sucesso!", id: result.rows[0].coddiario },
-      { status: 201 }
+      {
+        message: "Diário criado com sucesso!",
+        diario: result.rows[0],
+      },
+      {
+        status: 201,
+      }
     );
   } catch (error) {
-    if (error.code === "23505") {
-      return NextResponse.json(
-        { error: "Você já registrou o diário deste dia." },
-        { status: 409 }
-      );
-    }
+    console.error("Erro no POST Diario:", error);
 
-    console.error(error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+      {
+        error: "Erro interno do servidor.",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
 
 export async function GET(requisicao) {
+  const { searchParams } = new URL(requisicao.url);
+  const codusuario = searchParams.get('codusuario');
+
   try {
-    const { searchParams } = new URL(requisicao.url);
-    const codUsuario = searchParams.get("CodUsuario");
+    let diarioResult;
 
-    if (!codUsuario) {
-      return NextResponse.json(
-        { error: "CodUsuario é obrigatório." },
-        { status: 400 }
+    if (codusuario) {
+      // Retorna apenas os diários do usuário logado
+      diarioResult = await pool.query(
+        `SELECT d.coddiario, d.descricao, d.humor, d.datadiario, u.nome
+         FROM diario d
+         JOIN usuario u ON u.codusuario = d.codusuario
+         WHERE d.codusuario = $1
+         ORDER BY d.datadiario DESC;`, // mais recentes primeiro
+        [codusuario]
+      );
+    } else {
+      // Retorna  TODOS os diários do sistema
+      diarioResult = await pool.query(
+        `SELECT d.coddiario, d.descricao, d.humor, d.datadiario, u.nome
+         FROM diario d
+         JOIN usuario u ON u.codusuario = d.codusuario
+         ORDER BY d.datadiario DESC;`
       );
     }
 
-    const id = parseInt(codUsuario);
-    if (isNaN(id)) {
-      return NextResponse.json(
-        { error: "CodUsuario inválido." },
-        { status: 400 }
-      );
-    }
+    return NextResponse.json(diarioResult.rows);
 
-    const result = await pool.query(
-      `SELECT CodDiario, dataDiario, descricao, humor, notaTreino
-       FROM Diario
-       WHERE CodUsuario = $1
-         AND ativo = true
-       ORDER BY dataDiario DESC`,
-      [id]
-    );
-
-    return NextResponse.json(result.rows);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Erro ao buscar dados do banco." },
       { status: 500 }
     );
   }
 }
 
-export async function DELETE(requisicao) {
-  try {
-    const { searchParams } = new URL(requisicao.url);
-
-    const parsed = deleteDiarioSchema.safeParse({
-      CodDiario: searchParams.get("CodDiario"),
-    });
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "ID inválido." },
-        { status: 400 }
-      );
-    }
-
-    const { CodDiario } = parsed.data;
-
-    const result = await pool.query(
-      `UPDATE Diario
-       SET ativo = false
-       WHERE CodDiario = $1
-       RETURNING CodDiario`,
-      [CodDiario]
-    );
-
-    if (result.rowCount === 0) {
-      return NextResponse.json(
-        { error: "Diário não encontrado." },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({
-      message: "Diário inativado com sucesso!",
-    });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(requisicao) {
-  try {
-    const body = await requisicao.json();
-
-    const parsed = updateDiarioSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: parsed.error.flatten().fieldErrors },
-        { status: 400 }
-      );
-    }
-
-    const { CodDiario, CodUsuario, descricao, humor, notaTreino, ativo } = parsed.data;
-
-    const result = await pool.query(
-      `UPDATE Diario
-       SET descricao  = COALESCE($1, descricao),
-           humor      = COALESCE($2, humor),
-           notaTreino = COALESCE($3, notaTreino),
-           ativo      = COALESCE($4, ativo)
-       WHERE CodDiario  = $5
-         AND CodUsuario = $6
-       RETURNING CodDiario, dataDiario, descricao, humor, notaTreino, ativo`,
-      [descricao, humor, notaTreino, ativo, CodDiario, CodUsuario]
-    );
-
-    if (result.rowCount === 0) {
-      return NextResponse.json(
-        { error: "Diário não encontrado." },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(result.rows[0]);
-  } catch (error) {
-    if (error.code === "23505") {
-      return NextResponse.json(
-        { error: "Dados já existentes." },
-        { status: 409 }
-      );
-    }
-
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}

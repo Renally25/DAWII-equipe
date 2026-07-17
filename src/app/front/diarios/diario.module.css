@@ -1,0 +1,33 @@
+.dashboard {
+  display: flex;
+  background: #D5CDB8;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.conteudoSemDetalhes {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.conteudoComDetalhes {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 24px;
+  padding: 32px;
+  min-height: 0;
+  overflow: hidden;
+}

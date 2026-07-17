@@ -1,0 +1,224 @@
+.dashboard {
+  display: flex;
+  height: 100vh;
+  background: #d5cdb8;
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* PAINEL ESQUERDO */
+
+.left {
+  width: 30%;
+  min-width: 320px;
+  max-width: 380px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* PAINEL DIREITO */
+
+.right {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+/* CARD */
+
+.card {
+  background: white;
+
+  border-radius: 16px;
+
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+
+  padding: 20px;
+}
+
+/* TÍTULOS */
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3b4231;
+}
+
+.subtitle {
+  color: #777;
+  margin-top: 4px;
+}
+
+/* BOTÕES */
+
+.button {
+  border: none;
+
+  background: #656c47;
+
+  color: white;
+
+  padding: 10px 18px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.button:hover {
+  background: #4d5437;
+}
+
+/* INPUTS */
+
+.input {
+  width: 100%;
+
+  border: 1px solid #d9d9d9;
+
+  border-radius: 10px;
+
+  padding: 10px 14px;
+
+  font-size: 15px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #656c47;
+}
+
+/* SCROLL */
+
+.left,
+.right {
+  overflow-y: auto;
+}
+
+.left::-webkit-scrollbar,
+.right::-webkit-scrollbar {
+  width: 8px;
+}
+
+.left::-webkit-scrollbar-thumb,
+.right::-webkit-scrollbar-thumb {
+  background: #bdbdbd;
+  border-radius: 20px;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 1000px) {
+
+  .container {
+    flex-direction: column;
+  }
+
+  .left {
+    width: 100%;
+    max-width: none;
+  }
+
+}
+/* Adicione no final do arquivo */
+
+.novoTreinoCard {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.08);
+  margin-top: 20px;
+}
+
+.novoTreinoCard h4 {
+  margin: 0 0 16px 0;
+  color: #3B4231;
+  font-size: 18px;
+}
+
+.novoTreinoCard input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.novoTreinoCard input:focus {
+  outline: none;
+  border-color: #656C47;
+}
+
+.botoesTreino {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.botoesTreino .cancelar {
+  background: #ddd;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: .2s;
+}
+
+.botoesTreino .cancelar:hover {
+  background: #ccc;
+}
+
+.botoesTreino .salvar {
+  background: #656C47;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: .2s;
+}
+
+.botoesTreino .salvar:hover {
+  background: #4f5738;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 18px;
+  color: #888;
+}

@@ -1,0 +1,123 @@
+.dashboardLayout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #d5cdb8;
+    width: 100vw;           
+    overflow-x: hidden; 
+    box-sizing: border-box;
+}
+
+.conteudoPrincipal {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; 
+}
+
+.container {
+    padding: 40px;
+    font-family: sans-serif;
+}
+
+.headerPacientes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.headerPacientes h2 {
+    font-size: 26px;
+    color: #3B4231; 
+    margin: 0;
+}
+
+.contadorPacientes {
+    font-size: 14px;
+    color: #656C47; 
+    margin: 5px 0 0 0;
+}
+
+.tabelaContainer {
+    background-color: rgba(255, 255, 255, 0.55);
+    border-radius: 12px;
+    border: 1px solid #E2E8F0;
+    overflow: auto; 
+    max-height: 640px; 
+    width: 100%;       
+}
+
+.tabelaPacientes {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 600px; 
+}
+
+.tabelaPacientes th {
+    color: #656C47; 
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 15px 20px;
+    border-bottom: 1px solid #E2E8F0;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.tabelaPacientes td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #F1F5F9;
+    color: #3B4231;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.colunaPaciente {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.colunaPaciente img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.infoPaciente {
+    display: flex;
+    flex-direction: column;
+}
+
+.nomePaciente {
+    font-weight: 600;
+    color: #3B4231;
+}
+
+.detalhesPaciente {
+    font-size: 12px;
+    color: #888888;
+}
+
+.badgeStatus {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.statusTratamento {
+    background-color: rgba(101, 108, 71, 0.12); 
+    color: #656C47;
+}
+
+.sessaoData {
+    font-weight: 500;
+    color: #3B4231;
+}

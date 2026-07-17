@@ -3,6 +3,7 @@ import pool from "@/lib/db";
 import bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
 import { UserSchema, DeleteUserSchema } from "@/lib/validators";
+import { enviarCredenciais } from "@/lib/services/eviaremail";
 
 export async function POST(requisicao) {
   try {
@@ -10,13 +11,18 @@ export async function POST(requisicao) {
 
     console.log(body, "Dados recebidos");
 
-    const { nome, email, cpf, endereco, telefone, tipoUsuario } = body;
+    const { nome, email, cpf, cep, estado, cidade, bairro, rua, numero, telefone, tipoUsuario } = body;
 
     const parsed = UserSchema.safeParse({
       nome,
       email,
       cpf,
-      endereco,
+      cep,
+      estado,
+      cidade,
+      bairro,
+      rua,
+      numero,
       telefone,
       tipoUsuario,
     });
@@ -92,21 +98,41 @@ export async function POST(requisicao) {
       )
       VALUES (
         $1,
-        '00000-000',
-        'PB',
-        'Esperança',
-        'Centro',
         $2,
-        'S/N',
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
         true
       )`,
-      [codUsuario, endereco],
+      [codUsuario, cep, estado, cidade, bairro, rua, numero],
     );
+
+    let emailEnviado = false;
+    let emailErro = null;
+
+    try {
+      const resultadoEmail = await enviarCredenciais({
+        email,
+        nome,
+        senhaTemporaria: senhaGerada,
+        tipo: tipoUsuario,
+      });
+
+      emailEnviado = resultadoEmail?.ok === true;
+      emailErro = resultadoEmail?.ok ? null : resultadoEmail?.error || "Falha ao enviar e-mail.";
+    } catch (error) {
+      console.error("Erro no envio de e-mail após cadastro:", error);
+      emailErro = error.message;
+    }
 
     return NextResponse.json(
       {
         message: "Usuário cadastrado com sucesso!",
         senhaTemporaria: senhaGerada,
+        emailEnviado,
+        emailErro,
       },
       { status: 201 },
     );
@@ -215,7 +241,7 @@ export async function PUT(requisicao) {
   try {
     const body = await requisicao.json();
 
-    const { codusuario, nome, email, cpf, endereco, telefone, tipoUsuario } =
+    const { codusuario, nome, email, cpf, cep, estado, cidade, bairro, rua, numero, telefone, tipoUsuario } =
       body;
 
     // limpa cpf
@@ -254,9 +280,14 @@ export async function PUT(requisicao) {
     // atualiza endereço
     await pool.query(
       `UPDATE Endereco
-       SET rua = COALESCE($1, rua)
-       WHERE codusuario = $2`,
-      [endereco, codusuario],
+       SET cep = COALESCE($2, cep),
+        estado = COALESCE($3, estado),
+        cidade = COALESCE($4, cidade),
+        bairro = COALESCE($5, bairro),
+        rua = COALESCE($6, rua),
+        numero = COALESCE($7, numero)
+       WHERE codusuario = $1`,
+      [codusuario, cep, estado, cidade, bairro, rua, numero],
     );
 
     return NextResponse.json(

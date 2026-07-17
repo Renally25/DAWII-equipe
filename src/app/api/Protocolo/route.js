@@ -1,56 +1,97 @@
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
-import {
-  createProtocoloSchema,
-  deleteProtocoloSchema,
-  updateProtocoloSchema,
-} from "@/lib/validators";
+import { createProtocoloSchema } from "@/lib/validators";
 
 export async function POST(requisicao) {
   try {
     const body = await requisicao.json();
 
-    const parsed = createProtocoloSchema.safeParse(body);
+    const { descricao, dataprotocolo, codfisioterapeuta } = body;
+    console.log("BODY:", body);
+    console.log("codfisioterapeuta:", body.codfisioterapeuta);
+    const parsed = createProtocoloSchema.safeParse({
+      descricao,
+      dataprotocolo,
+    });
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: parsed.error.flatten().fieldErrors },
-        { status: 400 }
+        {
+          error: parsed.error.flatten().fieldErrors,
+        },
+        {
+          status: 400,
+        },
       );
     }
 
-    const { descricao, dataProtocolo, CodUsuario } = parsed.data;
+    const codFisio = Number(codfisioterapeuta);
 
-    // Verifica se o usuário é um Fisioterapeuta válido
-    const fisioterapeutaCheck = await pool.query(
-      `SELECT CodUsuario FROM Fisioterapeuta
-       WHERE CodUsuario = $1 AND ativo = true`,
-      [CodUsuario]
+    if (!Number.isInteger(codFisio) || codFisio <= 0) {
+      return NextResponse.json(
+        {
+          error: "codfisioterapeuta inválido.",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    // Verifica se o fisioterapeuta existe
+    const fisioterapeuta = await pool.query(
+      `
+      SELECT codusuario
+      FROM Fisioterapeuta
+      WHERE codusuario = $1
+      `,
+      [codFisio],
     );
 
-    if (fisioterapeutaCheck.rowCount === 0) {
+    if (fisioterapeuta.rows.length === 0) {
       return NextResponse.json(
-        { error: "Fisioterapeuta não encontrado ou inativo" },
-        { status: 404 }
+        {
+          error: "Fisioterapeuta não encontrado.",
+        },
+        {
+          status: 404,
+        },
       );
     }
 
     const result = await pool.query(
-      `INSERT INTO Protocolo (descricao, dataProtocolo, CodUsuario, ativo)
-       VALUES ($1, $2, $3, true)
-       RETURNING CodProtocolo`,
-      [descricao, dataProtocolo, CodUsuario]
+      `
+      INSERT INTO Protocolo
+      (
+        descricao,
+        dataprotocolo,
+        codfisioterapeuta
+      )
+      VALUES
+      (
+        $1,
+        $2,
+        $3
+      )
+      RETURNING *;
+      `,
+      [descricao, dataprotocolo, codFisio],
     );
 
-    return NextResponse.json(
-      { message: "Protocolo criado com sucesso!", CodProtocolo: result.rows[0].codprotocolo },
-      { status: 201 }
-    );
+    return NextResponse.json(result.rows[0], {
+      status: 201,
+    });
   } catch (error) {
     console.error(error);
+
     return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+      {
+        error: "Erro ao criar protocolo.",
+        details: error.message,
+      },
+      {
+        status: 500,
+      },
     );
   }
 }
@@ -58,137 +99,55 @@ export async function POST(requisicao) {
 export async function GET(requisicao) {
   try {
     const { searchParams } = new URL(requisicao.url);
-    const CodUsuario = searchParams.get("CodUsuario");
 
-    let query = `SELECT CodProtocolo, descricao, dataProtocolo, CodUsuario
-                 FROM Protocolo
-                 WHERE ativo = true`;
-    const params = [];
+    const codfisioterapeuta = searchParams.get("codfisioterapeuta");
 
-    if (CodUsuario) {
-      query += ` AND CodUsuario = $1`;
-      params.push(CodUsuario);
+    if (!codfisioterapeuta) {
+      return NextResponse.json(
+        {
+          error: "codfisioterapeuta é obrigatório.",
+        },
+        {
+          status: 400,
+        },
+      );
     }
 
-    query += ` ORDER BY dataProtocolo DESC`;
+    const codFisio = Number(codfisioterapeuta);
 
-    const result = await pool.query(query, params);
+    if (!Number.isInteger(codFisio) || codFisio <= 0) {
+      return NextResponse.json(
+        {
+          error: "codfisioterapeuta inválido.",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    const result = await pool.query(
+      `
+      SELECT *
+      FROM Protocolo
+      WHERE codfisioterapeuta = $1
+      ORDER BY dataprotocolo DESC;
+      `,
+      [codFisio],
+    );
 
     return NextResponse.json(result.rows);
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(requisicao) {
-  try {
-    const body = await requisicao.json();
-
-    const parsed = updateProtocoloSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: parsed.error.flatten().fieldErrors },
-        { status: 400 }
-      );
-    }
-
-    const { CodProtocolo, descricao, dataProtocolo, ativo } = parsed.data;
-
-    let query = `UPDATE Protocolo SET`;
-    const params = [];
-    const updates = [];
-
-    if (descricao !== undefined) {
-      updates.push(`descricao = $${params.length + 1}`);
-      params.push(descricao);
-    }
-
-    if (dataProtocolo !== undefined) {
-      updates.push(`dataProtocolo = $${params.length + 1}`);
-      params.push(dataProtocolo);
-    }
-
-    if (ativo !== undefined) {
-      updates.push(`ativo = $${params.length + 1}`);
-      params.push(ativo);
-    }
-
-    if (updates.length === 0) {
-      return NextResponse.json(
-        { error: "Nenhum campo para atualizar" },
-        { status: 400 }
-      );
-    }
-
-    query += ` ${updates.join(", ")} WHERE CodProtocolo = $${params.length + 1} RETURNING CodProtocolo`;
-    params.push(CodProtocolo);
-
-    const result = await pool.query(query, params);
-
-    if (result.rowCount === 0) {
-      return NextResponse.json(
-        { error: "Protocolo não encontrado" },
-        { status: 404 }
-      );
-    }
 
     return NextResponse.json(
-      { message: "Protocolo atualizado com sucesso!" }
-    );
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(requisicao) {
-  try {
-    const { searchParams } = new URL(requisicao.url);
-
-    const parsed = deleteProtocoloSchema.safeParse({
-      CodProtocolo: searchParams.get("CodProtocolo"),
-    });
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "ID inválido" },
-        { status: 400 }
-      );
-    }
-
-    const { CodProtocolo } = parsed.data;
-
-    const result = await pool.query(
-      `UPDATE Protocolo
-       SET ativo = false
-       WHERE CodProtocolo = $1
-       RETURNING CodProtocolo`,
-      [CodProtocolo]
-    );
-
-    if (result.rowCount === 0) {
-      return NextResponse.json(
-        { error: "Protocolo não encontrado" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { message: "Protocolo deletado com sucesso!" }
-    );
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+      {
+        error: "Erro ao buscar protocolos.",
+        details: error.message,
+      },
+      {
+        status: 500,
+      },
     );
   }
 }

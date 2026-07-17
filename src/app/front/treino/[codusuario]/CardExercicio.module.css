@@ -1,0 +1,153 @@
+.card{
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:22px;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+
+    transition:.2s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.topo{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    margin-bottom:22px;
+
+}
+
+.topo h3{
+
+    margin:0;
+
+    color:#3B4231;
+
+    font-size:21px;
+
+}
+
+.topo p{
+
+    margin-top:6px;
+
+    color:#777;
+
+}
+
+.acoes{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.acoes button{
+
+    width:38px;
+
+    height:38px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.editar{
+
+    background:#E8F1E4;
+
+    color:#3B4231;
+
+}
+
+.editar:hover{
+
+    background:#DCE9D7;
+
+}
+
+.excluir{
+
+    background:#FDEAEA;
+
+    color:#D42F2F;
+
+}
+
+.excluir:hover{
+
+    background:#F9D8D8;
+
+}
+
+.informacoes{
+
+    display:flex;
+
+    gap:35px;
+
+}
+
+.info{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.valor{
+
+    display:block;
+
+    font-size:18px;
+
+    font-weight:700;
+
+}
+
+.label{
+
+    display:block;
+
+    color:#888;
+
+    font-size:13px;
+
+}
+
+.kg{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    color:#656C47;
+
+}

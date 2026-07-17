@@ -1,74 +1,129 @@
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
-import {
-  createExercicioSchema,
-  deleteExercicioSchema,
-  updateExercicioSchema,
-} from "@/lib/validators";
+import { CreateExercicioSchema } from "@/lib/validators";
 
 export async function POST(requisicao) {
   try {
     const body = await requisicao.json();
+    console.log("Dados recebidos no POST:", body);
 
-    const parsed = createExercicioSchema.safeParse(body);
+    const {
+      nome,
+      series,
+      repeticoes,
+      peso,
+      descricao,
+      descanso,
+      codtreino,
+      codprotocolo,
+    } = body;
 
-    if (!parsed.success) {
+    // Deve informar um ou outro, nunca os dois
+    if (!codtreino && !codprotocolo) {
       return NextResponse.json(
-        { error: parsed.error.flatten().fieldErrors },
+        { error: "É obrigatório informar codtreino ou codprotocolo." },
         { status: 400 }
       );
     }
 
-    const { nome, descricao, series, repeticoes, peso, CodTreino, CodProtocolo } = parsed.data;
+    if (codtreino && codprotocolo) {
+      return NextResponse.json(
+        { error: "Informe apenas codtreino ou codprotocolo." },
+        { status: 400 }
+      );
+    }
 
-    // Verifica se o Treino existe
-    if (CodTreino) {
+    const parsed = CreateExercicioSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: "Dados inválidos",
+          details: parsed.error.flatten().fieldErrors,
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    // Se for exercício de treino
+    if (codtreino) {
       const treinoCheck = await pool.query(
-        `SELECT CodTreino FROM Treino
-         WHERE CodTreino = $1 AND ativo = true`,
-        [CodTreino]
+        "SELECT codtreino FROM treino WHERE codtreino = $1",
+        [codtreino]
       );
 
-      if (treinoCheck.rowCount === 0) {
+      if (treinoCheck.rows.length === 0) {
         return NextResponse.json(
-          { error: "Treino não encontrado ou inativo" },
+          { error: "Treino não encontrado." },
           { status: 404 }
         );
       }
     }
 
-    // Verifica se o Protocolo existe
-    if (CodProtocolo) {
+    // Se for exercício de protocolo
+    if (codprotocolo) {
       const protocoloCheck = await pool.query(
-        `SELECT CodProtocolo FROM Protocolo
-         WHERE CodProtocolo = $1 AND ativo = true`,
-        [CodProtocolo]
+        "SELECT codprotocolo FROM protocolo WHERE codprotocolo = $1",
+        [codprotocolo]
       );
 
-      if (protocoloCheck.rowCount === 0) {
+      if (protocoloCheck.rows.length === 0) {
         return NextResponse.json(
-          { error: "Protocolo não encontrado ou inativo" },
+          { error: "Protocolo não encontrado." },
           { status: 404 }
         );
       }
     }
 
     const result = await pool.query(
-      `INSERT INTO Exercicio (nome, descricao, series, repeticoes, peso, CodTreino, CodProtocolo, ativo)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, true)
-       RETURNING CodExercicio`,
-      [nome, descricao, series, repeticoes, peso || null, CodTreino || null, CodProtocolo || null]
+      `
+      INSERT INTO exercicio
+      (
+        nome,
+        series,
+        repeticoes,
+        descanso,
+        peso,
+        descricao,
+        codtreino,
+        codprotocolo
+      )
+      VALUES
+      (
+        $1,$2,$3,$4,$5,$6,$7,$8
+      )
+      RETURNING *;
+      `,
+      [
+        nome,
+        series,
+        repeticoes,
+        descanso ?? null,
+        peso ?? null,
+        descricao ?? null,
+        codtreino ?? null,
+        codprotocolo ?? null,
+      ]
     );
 
-    return NextResponse.json(
-      { message: "Exercício criado com sucesso!", CodExercicio: result.rows[0].codexercicio },
-      { status: 201 }
-    );
+    console.log("Exercício criado:", result.rows[0]);
+
+    return NextResponse.json(result.rows[0], {
+      status: 201,
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Erro ao criar exercício:", error);
+
     return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+      {
+        error: "Erro ao criar exercício",
+        details: error.message,
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
@@ -76,158 +131,69 @@ export async function POST(requisicao) {
 export async function GET(requisicao) {
   try {
     const { searchParams } = new URL(requisicao.url);
-    const CodTreino = searchParams.get("CodTreino");
-    const CodProtocolo = searchParams.get("CodProtocolo");
 
-    let query = `SELECT CodExercicio, nome, descricao, series, repeticoes, peso, CodTreino, CodProtocolo
-                 FROM Exercicio
-                 WHERE ativo = true`;
-    const params = [];
+    const codtreino = searchParams.get("codtreino");
+    const codprotocolo = searchParams.get("codprotocolo");
 
-    if (CodTreino) {
-      query += ` AND CodTreino = $1`;
-      params.push(CodTreino);
+    // Deve informar um ou outro
+    if (!codtreino && !codprotocolo) {
+      return NextResponse.json(
+        {
+          error: "É obrigatório informar codtreino ou codprotocolo.",
+        },
+        {
+          status: 400,
+        }
+      );
     }
 
-    if (CodProtocolo) {
-      query += ` AND CodProtocolo = $${params.length + 1}`;
-      params.push(CodProtocolo);
+    if (codtreino && codprotocolo) {
+      return NextResponse.json(
+        {
+          error: "Informe apenas codtreino ou codprotocolo.",
+        },
+        {
+          status: 400,
+        }
+      );
     }
 
-    query += ` ORDER BY CodExercicio ASC`;
+    let result;
 
-    const result = await pool.query(query, params);
+    if (codtreino) {
+      result = await pool.query(
+        `
+        SELECT *
+        FROM exercicio
+        WHERE codtreino = $1
+        ORDER BY codexercicio;
+        `,
+        [codtreino]
+      );
+    } else {
+      result = await pool.query(
+        `
+        SELECT *
+        FROM exercicio
+        WHERE codprotocolo = $1
+        ORDER BY codexercicio;
+        `,
+        [codprotocolo]
+      );
+    }
 
     return NextResponse.json(result.rows);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(requisicao) {
-  try {
-    const body = await requisicao.json();
-
-    const parsed = updateExercicioSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: parsed.error.flatten().fieldErrors },
-        { status: 400 }
-      );
-    }
-
-    const { CodExercicio, nome, descricao, series, repeticoes, peso, ativo } = parsed.data;
-
-    let query = `UPDATE Exercicio SET`;
-    const params = [];
-    const updates = [];
-
-    if (nome !== undefined) {
-      updates.push(`nome = $${params.length + 1}`);
-      params.push(nome);
-    }
-
-    if (descricao !== undefined) {
-      updates.push(`descricao = $${params.length + 1}`);
-      params.push(descricao);
-    }
-
-    if (series !== undefined) {
-      updates.push(`series = $${params.length + 1}`);
-      params.push(series);
-    }
-
-    if (repeticoes !== undefined) {
-      updates.push(`repeticoes = $${params.length + 1}`);
-      params.push(repeticoes);
-    }
-
-    if (peso !== undefined) {
-      updates.push(`peso = $${params.length + 1}`);
-      params.push(peso);
-    }
-
-    if (ativo !== undefined) {
-      updates.push(`ativo = $${params.length + 1}`);
-      params.push(ativo);
-    }
-
-    if (updates.length === 0) {
-      return NextResponse.json(
-        { error: "Nenhum campo para atualizar" },
-        { status: 400 }
-      );
-    }
-
-    query += ` ${updates.join(", ")} WHERE CodExercicio = $${params.length + 1} RETURNING CodExercicio`;
-    params.push(CodExercicio);
-
-    const result = await pool.query(query, params);
-
-    if (result.rowCount === 0) {
-      return NextResponse.json(
-        { error: "Exercício não encontrado" },
-        { status: 404 }
-      );
-    }
+    console.error("Erro ao buscar exercícios:", error);
 
     return NextResponse.json(
-      { message: "Exercício atualizado com sucesso!" }
-    );
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(requisicao) {
-  try {
-    const { searchParams } = new URL(requisicao.url);
-
-    const parsed = deleteExercicioSchema.safeParse({
-      CodExercicio: searchParams.get("CodExercicio"),
-    });
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "ID inválido" },
-        { status: 400 }
-      );
-    }
-
-    const { CodExercicio } = parsed.data;
-
-    const result = await pool.query(
-      `UPDATE Exercicio
-       SET ativo = false
-       WHERE CodExercicio = $1
-       RETURNING CodExercicio`,
-      [CodExercicio]
-    );
-
-    if (result.rowCount === 0) {
-      return NextResponse.json(
-        { error: "Exercício não encontrado" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { message: "Exercício deletado com sucesso!" }
-    );
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+      {
+        error: "Erro ao buscar exercícios",
+        details: error.message,
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

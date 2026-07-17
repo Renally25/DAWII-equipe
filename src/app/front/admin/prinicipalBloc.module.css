@@ -1,8 +1,17 @@
 .principalBloc{
     display: flex;
     flex-direction: row;
-    gap: 25px;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
     background-color: #D5CDB8;
+    margin-top: 40px;
+}
+
+.colunaFormulario,
+.colunaUsuarios{
+    display: flex;
+    flex-direction: column;
 }
 
 .input{
@@ -41,6 +50,7 @@
     width: 450px;
     border-radius: 15px;
     margin: 50px auto;
+    overflow-y: auto;
 }
 
 .containerUsers{
@@ -50,11 +60,10 @@
     padding: 20px;
     background-color: #B4AA8E;
     box-shadow: 2px 2px 5px black;
-    padding: 20px;
     width: 450px;
     border-radius: 15px;
-    margin: 50px auto;
     height: 550px;
+    margin-top: 10px;
 }
 
 .users{
@@ -134,16 +143,11 @@
 .novoUsuario{
     display: flex;
     flex-direction: row;
-    border: none;
-    color: #454c3b;
-    height: 70px;
-    width: 230px;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    top: 60px;
-    left: 220px;
     gap: 10px;
+    align-items: center;
+
+    position: static;
+    width: 450px;
 }
 
 .blocoTexto{
@@ -155,4 +159,8 @@
 .titulo{
     font-size: 20px;
     font-weight: bold;
+}
+
+.colunaUsuarios .buscaContainer{
+    width: 450px;
 }
