@@ -48,7 +48,7 @@ export function Calendario() {
 
   async function buscarConsultas() {
     try {
-      const result = await fetch("http://localhost:3000/api/Consulta");
+      const result = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta`);
 
       if (!result.ok) {
         throw new Error("Erro ao buscar consultas"); //vai automaticamente para o catch

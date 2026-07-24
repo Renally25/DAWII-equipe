@@ -1,10 +1,12 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+import { temPermissao } from "@/lib/permissoes";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+
 import Sidebar from "../sidebar/sidebar";
 import { profiles } from "../sidebar/profiles";
-
 import Top from "../top/top";
 
 import styles from "./dashboard.module.css";
@@ -18,7 +20,7 @@ function DiariosRecentes() {
   useEffect(() => {
     const buscarDiarios = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/Diario");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Diario`);
         const data = await response.json();
         const listaDiarios = Array.isArray(data) ? data : data.diarios || [];
 
@@ -77,7 +79,10 @@ function DiariosRecentes() {
               </div>
               <p className={diariosStyles.texto}>{diario.descricao}</p>
               {/* Corrigido: trocado de <a> para <Link> integrado ao Next.js */}
-              <Link href={`./diarios?id=${diario.coddiario}`} className={diariosStyles.linkVerMais}>
+              <Link
+                href={`./diarios?id=${diario.coddiario}`}
+                className={diariosStyles.linkVerMais}
+              >
                 Ver mais →
               </Link>
             </div>
@@ -98,7 +103,7 @@ function Cards() {
   useEffect(() => {
     const buscarDados = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/Consulta");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta`);
         const data = await response.json();
 
         const hoje = new Date().toISOString().split("T")[0];
@@ -153,7 +158,7 @@ function Alertas() {
   useEffect(() => {
     const pegarConsults = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/Consulta");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta`);
         const dataConsults = await response.json();
         setData(dataConsults);
       } catch (error) {
@@ -183,8 +188,8 @@ function Alertas() {
               <div className={alertasStyles.alertaTopo}>
                 <span className={alertasStyles.alertaNome}>Consulta</span>
                 <span className={alertasStyles.alertaData}>
-                  {alerta.dataconsulta 
-                    ? new Date(alerta.dataconsulta).toLocaleDateString("pt-BR") 
+                  {alerta.dataconsulta
+                    ? new Date(alerta.dataconsulta).toLocaleDateString("pt-BR")
                     : ""}
                 </span>
               </div>
@@ -203,6 +208,30 @@ function Alertas() {
 }
 
 export default function PsicologaGeral() {
+  const { data: session } = useSession();
+
+  if (!session) {
+    return <p>Carregando...</p>;
+  }
+
+  const podeVer = temPermissao(
+    session.user.tipousuario,
+    "acessarProntuario",
+    "acessarDiarios",
+  );
+console.log("TIPO:", session.user.tipousuario);
+
+console.log(
+  "PERMISSÃO:",
+temPermissao(
+  "psicologo",
+  "acessarProntuario",
+  "acessarDiarios"
+)
+);
+  if (!podeVer) {
+    return <h1>Acesso negado</h1>;
+  }
   return (
     <div className={styles.dashboard}>
       <Sidebar profile={profiles.psicologa} />

@@ -42,7 +42,7 @@ export default function TelaTreino() {
   async function carregarPaciente() {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/Usuario/${codusuario}`,
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`,
       );
 
       if (!response.ok) throw new Error("Erro ao carregar paciente");
@@ -60,7 +60,7 @@ export default function TelaTreino() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/Exercicio?codtreino=${treino.codtreino}`,
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio?codtreino=${treino.codtreino}`,
       );
 
       if (!response.ok) throw new Error("Erro ao carregar exercícios");
@@ -85,7 +85,7 @@ export default function TelaTreino() {
   async function carregarTreinos() {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/Treino?codusuario=${codusuario}`,
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Treino?codusuario=${codusuario}`,
       );
 
       if (!response.ok) throw new Error("Erro ao carregar treinos");
@@ -119,7 +119,7 @@ export default function TelaTreino() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/Treino", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Treino`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -176,7 +176,7 @@ export default function TelaTreino() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/Exercicio/${codexercicio}`,
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio/${codexercicio}`,
         {
           method: "DELETE",
         },

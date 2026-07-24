@@ -18,7 +18,7 @@ export default function ListaDiarios({ abrirDiario, diarioSelecionado }) {
 
   useEffect(() => {
     async function carregar() {
-      const result = await fetch("http://localhost:3000/api/Diario");
+      const result = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Diario`);
       const data = await result.json();
 
       setDiarios(data);

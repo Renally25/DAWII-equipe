@@ -23,7 +23,7 @@ export default function DiarioPage() {
 
     try {
       const result = await fetch(
-        `http://localhost:3000/api/Diario/${coddiario}`,
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Diario/${coddiario}`,
       );
 
       if (!result.ok) {

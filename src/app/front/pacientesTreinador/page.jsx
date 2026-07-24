@@ -16,7 +16,7 @@ export default function Treinos() {
 
   const pegarPacientes = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/Aluno_Paciente");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Aluno_Paciente`);
       const dataPacientes = await response.json();
 
       setData(dataPacientes.pacientes);

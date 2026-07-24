@@ -19,7 +19,7 @@ function Cards() {
   useEffect(() => {
     const buscarDados = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/Consulta?codusuario");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}api/Consulta?codusuario`);
 
         const data = await response.json();
 
@@ -68,7 +68,7 @@ function Alertas() {
 
   const pegarConsults = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/Consulta");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta`);
       const dataConsults = await response.json();
 
       setData(dataConsults);

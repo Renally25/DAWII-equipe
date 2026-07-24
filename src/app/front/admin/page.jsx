@@ -85,7 +85,7 @@ export function Formulario() {
       return;
     }
 
-    const result = await fetch("http://localhost:3000/api/Usuario", {
+    const result = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json", //indicar para a api que o corpo da requisição é um JSON
@@ -297,7 +297,7 @@ export function Usuarios({ filtro }) {
 
   const pegarUsers = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/Usuario");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`);
       const dataUser = await response.json();
 
       setdata(dataUser);
@@ -355,7 +355,7 @@ export function Usuarios({ filtro }) {
 
   async function deletarUsuario(codusuario) {
     const result = await fetch(
-      `http://localhost:3000/api/Usuario?CodUsuario=${codusuario}`,
+      `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario?CodUsuario=${codusuario}`,
       {
         method: "DELETE",
       },
@@ -372,7 +372,7 @@ export function Usuarios({ filtro }) {
 
     if (!novoNome) return;
 
-    const result = await fetch("http://localhost:3000/api/Usuario", {
+    const result = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`, {
       method: "PUT",
 
       headers: {

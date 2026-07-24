@@ -45,7 +45,7 @@ export default function TelaProtocolo() {
   async function carregarPaciente() {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/Usuario/${codusuario}`,
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`,
       );
 
       if (!response.ok) throw new Error("Erro ao carregar paciente");
@@ -63,7 +63,7 @@ export default function TelaProtocolo() {
 
   try {
     const response = await fetch(
-      `http://localhost:3000/api/Exercicio?codprotocolo=${protocolo.codprotocolo}`
+      `${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio?codprotocolo=${protocolo.codprotocolo}`
     );
 
     if (!response.ok) {
@@ -95,7 +95,7 @@ export default function TelaProtocolo() {
   async function carregarProtocolos() {
     try {
 const response = await fetch(
-  `http://localhost:3000/api/Protocolo?codfisioterapeuta=${COD_FISIOTERAPEUTA}`,
+  `${process.env.NEXT_PUBLIC_AUTH_API}/api/Protocolo?codfisioterapeuta=${COD_FISIOTERAPEUTA}`,
 );
 
       if (!response.ok) throw new Error("Erro ao carregar protocolos");
@@ -125,7 +125,7 @@ const response = await fetch(
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/Protocolo", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Protocolo`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -182,7 +182,7 @@ const response = await fetch(
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/Exercicio/${codexercicio}`,
+        `${process.env.NEXT_PUBLIC_AUTH_API}api/Exercicio/${codexercicio}`,
         {
           method: "DELETE",
         },
