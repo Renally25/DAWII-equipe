@@ -5,7 +5,7 @@ export async function abrirProntuario({
 }) {
 
   try {
-    const result = await fetch(`http://localhost:3000/api/Usuario/${codusuario}`);
+    const result = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`);
     console.log(result.status);
 
     if (!result.ok) {
@@ -23,7 +23,7 @@ export async function abrirProntuario({
 
 export async function salvarObservacoes({ codusuario, observacoes, setEditandoObs }) {
   try {
-    const result = await fetch(`http://localhost:3000/api/Aluno_Paciente/${codusuario}`, {
+    const result = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Aluno_Paciente/${codusuario}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -60,7 +60,7 @@ export function calcularIdade(dataNascimento) {
 export async function pegarDiarios({ codusuario }) {
   try {
     // Passamos o 'codusuario' como query param na URL
-    const result = await fetch(`http://localhost:3000/api/Diario?codusuario=${codusuario}`);
+    const result = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Diario?codusuario=${codusuario}`);
 
     if (!result.ok) {
       throw new Error("Erro ao buscar diários.");

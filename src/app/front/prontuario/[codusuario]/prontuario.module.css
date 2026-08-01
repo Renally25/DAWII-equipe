@@ -1,7 +1,6 @@
 .container {
     display: flex;
     flex-direction: column;
-    font-family: system-ui, -apple-system, sans-serif;
     padding: 10px 30px 30px 30px;
 }
 

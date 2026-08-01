@@ -61,7 +61,6 @@
   padding: 20px;
 }
 
-/* TÍTULOS */
 
 .title {
   font-size: 24px;
@@ -74,7 +73,6 @@
   margin-top: 4px;
 }
 
-/* BOTÕES */
 
 .button {
   border: none;
@@ -96,7 +94,6 @@
   background: #4d5437;
 }
 
-/* INPUTS */
 
 .input {
   width: 100%;
@@ -115,7 +112,6 @@
   border-color: #656c47;
 }
 
-/* SCROLL */
 
 .left,
 .right {
@@ -133,7 +129,6 @@
   border-radius: 20px;
 }
 
-/* RESPONSIVO */
 
 @media (max-width: 1000px) {
 
@@ -147,7 +142,6 @@
   }
 
 }
-/* Adicione no final do arquivo */
 
 .novoTreinoCard {
   background: white;

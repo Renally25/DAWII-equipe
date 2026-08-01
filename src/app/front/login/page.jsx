@@ -52,9 +52,6 @@ export default function LoginPage() {
     } else if (tipo === "fisioterapeuta") {
       router.push("/front/fisioterapeuta");
 
-    } else if (tipo === "aluno") {
-      router.push("/front/aluno");
-
     } else {
       setError("Tipo de usuário não encontrado");
       setIsLoading(false);

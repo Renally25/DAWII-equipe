@@ -1,5 +1,5 @@
 export const profiles = {
-  psicologa: {
+  psicologo: {
     titulo: "Psicóloga",
     avatarSrc: "/logo.png",
     items: [

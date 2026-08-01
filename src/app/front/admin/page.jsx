@@ -1,6 +1,6 @@
 "use client";
 
-
+import Modal from "./modal";
 import { useEffect, useState } from "react";
 import Header from "../header/header";
 import styles from "./prinicipalBloc.module.css";
@@ -85,25 +85,28 @@ export function Formulario() {
       return;
     }
 
-    const result = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json", //indicar para a api que o corpo da requisição é um JSON
+    const result = await fetch(
+      `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", //indicar para a api que o corpo da requisição é um JSON
+        },
+        body: JSON.stringify({
+          nome: nome,
+          email: email,
+          cpf: cpf,
+          cep: cep,
+          estado: estado,
+          cidade: cidade,
+          bairro: bairro,
+          rua: rua,
+          numero: numero,
+          telefone: telefone,
+          tipoUsuario: tipo,
+        }),
       },
-      body: JSON.stringify({
-        nome: nome,
-        email: email,
-        cpf: cpf,
-        cep: cep,
-        estado: estado,
-        cidade: cidade,
-        bairro: bairro,
-        rua: rua,
-        numero: numero,
-        telefone: telefone,
-        tipoUsuario: tipo,
-      }),
-    });
+    );
 
     if (result.ok) {
       //ok vem como resposta de todo fetch.
@@ -124,6 +127,32 @@ export function Formulario() {
     }
   }
 
+  async function buscarCep(cepDigitado) {
+    const cepLimpo = cepDigitado.replace(/\D/g, "");
+
+    if (cepLimpo.length !== 8) return;
+
+    try {
+      const response = await fetch(
+        `https://viacep.com.br/ws/${cepLimpo}/json/`,
+      );
+
+      const dados = await response.json();
+
+      if (dados.erro) {
+        alert("CEP não encontrado");
+        return;
+      }
+
+      setCep(cepLimpo);
+      setEstado(dados.uf);
+      setCidade(dados.localidade);
+      setBairro(dados.bairro);
+      setRua(dados.logradouro);
+    } catch (error) {
+      console.error("Erro ao buscar CEP:", error);
+    }
+  }
   return (
     <div className={styles.formulario}>
       <form
@@ -183,7 +212,17 @@ export function Formulario() {
             name="cep"
             type="text"
             value={cep}
-            onChange={(e) => setCep(e.target.value)}
+            onChange={(e) => {
+              const valor = e.target.value;
+
+              setCep(valor);
+
+              const cepLimpo = valor.replace(/\D/g, "");
+
+              if (cepLimpo.length === 8) {
+                buscarCep(cepLimpo);
+              }
+            }}
           />
         </div>
         <div className={styles.camposInput}>
@@ -294,10 +333,13 @@ export function Formulario() {
 
 export function Usuarios({ filtro }) {
   const [data, setdata] = useState([]);
+  const [usuarioEditando, setUsuarioEditando] = useState(null);
 
   const pegarUsers = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`,
+      );
       const dataUser = await response.json();
 
       setdata(dataUser);
@@ -308,7 +350,6 @@ export function Usuarios({ filtro }) {
   useEffect(() => {
     pegarUsers();
   }, []); //[] = toda vez que a tela carregar
-
 
   const usuariosFiltrados = data.filter(
     (item) =>
@@ -335,7 +376,7 @@ export function Usuarios({ filtro }) {
             <div className={styles.areaButtons}>
               <button
                 className={styles.editButton}
-                onClick={() => editarUsuario(item)}
+                onClick={() => setUsuarioEditando(item)}
               >
                 <Edit size={20} />
               </button>
@@ -350,6 +391,11 @@ export function Usuarios({ filtro }) {
           </div>
         ))}
       </div>
+      <Modal
+        usuario={usuarioEditando}
+        fechar={() => setUsuarioEditando(null)}
+        atualizar={pegarUsers}
+      />
     </div>
   );
 
@@ -363,31 +409,6 @@ export function Usuarios({ filtro }) {
 
     if (result.ok) {
       alert("Usuário deletado!");
-    }
-  }
-
-  async function editarUsuario(usuario) {
-    //aqui só tem a opção de editar o nome, mas depois pode ser expandida para os outros campos
-    const novoNome = prompt("Digite o novo nome:", usuario.nome);
-
-    if (!novoNome) return;
-
-    const result = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`, {
-      method: "PUT",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        codusuario: usuario.codusuario,
-        nome: novoNome,
-      }),
-    });
-
-    if (result.ok) {
-      alert("Usuário atualizado!"); //adicionar modal depois
-
       pegarUsers();
     }
   }
