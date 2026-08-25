@@ -234,7 +234,7 @@ temPermissao(
   }
   return (
     <div className={styles.dashboard}>
-      <Sidebar profile={profiles.psicologa} />
+      <Sidebar profile={profiles.psicologo} />
       <div className={styles.wrapperPrincipal}>
         <Top />
         <main className={styles.containerPrincipal}>

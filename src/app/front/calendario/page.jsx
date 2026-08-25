@@ -8,11 +8,46 @@ import CelulaDia from "./celulaDia";
 import { isSameDay, buildMonthGrid } from "./utils";
 import HeaderCalendario from "./headerCalendario";
 import { profiles } from "../sidebar/profiles";
+import { useSession } from "next-auth/react";
 
 export default function pagCalendarioPsico() {
+    const { data: session, status } = useSession();
+    const [data, setData] = useState({
+    tipousuario: "",
+  });
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.id) {
+      mostrarInformacoes(session.user.id);
+    }
+  }, [status, session]);
+
+  async function mostrarInformacoes(codusuario) {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`,
+      );
+
+      if (!response.ok) {
+        throw new Error("Erro ao buscar informações.");
+      }
+
+      const usuario = await response.json();
+
+      setData({
+        tipousuario: usuario.tipousuario,
+      });
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+    const profissao = data.tipousuario;
+
   return (
     <div className={styles.container}>
-      <Sidebar profile={profiles.psicologa} />
+      <Sidebar profile={profiles[profissao]} />
       <div>
         <Top />
         <main>

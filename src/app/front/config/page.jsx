@@ -10,6 +10,9 @@ import styles from "./config.module.css";
 export default function TelaConfig() {
   const { data: session, status } = useSession();
 
+  const [foto, setFoto] = useState(null);
+  const [fotoPreview, setFotoPreview] = useState("");
+
   const [data, setData] = useState({
     codusuario: "",
     nome: "",
@@ -18,6 +21,7 @@ export default function TelaConfig() {
     endereco: "",
     credencial: "",
     tipousuario: "",
+    fotoperfil: "",
   });
 
   useEffect(() => {
@@ -29,7 +33,7 @@ export default function TelaConfig() {
   async function mostrarInformacoes(codusuario) {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`,
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`
       );
 
       if (!response.ok) {
@@ -42,23 +46,55 @@ export default function TelaConfig() {
         codusuario: usuario.codusuario ?? "",
         nome: usuario.nome ?? "",
         email: usuario.email ?? "",
-        telefone: usuario.telefone ?? "", 
+        telefone: usuario.telefone ?? "",
         endereco:
           usuario.rua && usuario.numero
             ? `${usuario.rua}, ${usuario.numero}`
-            : (usuario.rua ?? ""), 
+            : (usuario.rua ?? ""),
         credencial: usuario.credencial ?? "",
         tipousuario: usuario.tipousuario ?? "",
+        fotoperfil: usuario.fotoperfil ?? "",
       });
-          console.log(usuario);
 
+      // Foto que já está salva no banco
+      if (usuario.fotoperfil) {
+        setFotoPreview(usuario.fotoperfil);
+      }
+
+      console.log(usuario);
     } catch (error) {
       console.error(error);
     }
   }
 
+  function handleFotoChange(e) {
+    const arquivo = e.target.files?.[0];
+
+    if (!arquivo) return;
+
+    // Verifica se é imagem
+    if (!arquivo.type.startsWith("image/")) {
+      alert("Selecione uma imagem válida.");
+      return;
+    }
+
+    // Limite de 5 MB
+    if (arquivo.size > 5 * 1024 * 1024) {
+      alert("A imagem deve ter no máximo 5 MB.");
+      return;
+    }
+
+    // Guarda o arquivo REAL
+    setFoto(arquivo);
+
+    // Cria apenas o preview
+    const url = URL.createObjectURL(arquivo);
+    setFotoPreview(url);
+  }
+
   async function atualizarInformacoes() {
     try {
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`,
         {
@@ -67,11 +103,39 @@ export default function TelaConfig() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
-        },
+        }
       );
 
       if (!response.ok) {
         throw new Error("Erro ao atualizar informações.");
+      }
+
+      if (foto) {
+        const formData = new FormData();
+
+        formData.append("codusuario", data.codusuario);
+        formData.append("foto", foto);
+
+        const fotoResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`,
+          {
+            method: "PUT",
+            body: formData,
+          }
+        );
+
+        if (!fotoResponse.ok) {
+          throw new Error("Erro ao atualizar foto.");
+        }
+
+        const fotoData = await fotoResponse.json();
+
+        setData((prev) => ({
+          ...prev,
+          fotoperfil: fotoData.fotoperfil,
+        }));
+
+        setFoto(null);
       }
 
       alert("Informações atualizadas com sucesso!");
@@ -89,6 +153,7 @@ export default function TelaConfig() {
       [name]: value,
     }));
   }
+
   const profissao = data.tipousuario;
 
   return (
@@ -102,19 +167,39 @@ export default function TelaConfig() {
           <div className={styles.header}>
             <h1>Configurações</h1>
 
-            <button onClick={atualizarInformacoes}>Salvar Alterações</button>
+            <button onClick={atualizarInformacoes}>
+              Salvar Alterações
+            </button>
           </div>
 
           <div className={styles.fotoPerfil}>
             <h1>Foto de Perfil</h1>
 
             <div className={styles.fotoElements}>
-              <img src="/noprofile.svg" alt="Foto de perfil" />
+              <img
+                src={fotoPreview || "/noprofile.svg"}
+                alt="Foto de perfil"
+              />
+
+              <input
+                type="file"
+                id="fotoPerfil"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleFotoChange}
+              />
 
               <div className={styles.fotoText}>
                 <h1>{data.nome || "Usuário"}</h1>
 
-                <button type="button">Alterar foto</button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    document.getElementById("fotoPerfil").click()
+                  }
+                >
+                  Alterar foto
+                </button>
               </div>
             </div>
           </div>
@@ -125,6 +210,7 @@ export default function TelaConfig() {
             <form>
               <div className={styles.camposInput}>
                 <label htmlFor="nome">Nome Completo:</label>
+
                 <input
                   type="text"
                   id="nome"
@@ -136,6 +222,7 @@ export default function TelaConfig() {
 
               <div className={styles.camposInput}>
                 <label htmlFor="email">Email:</label>
+
                 <input
                   type="email"
                   id="email"
@@ -147,6 +234,7 @@ export default function TelaConfig() {
 
               <div className={styles.camposInput}>
                 <label htmlFor="telefone">Telefone:</label>
+
                 <input
                   type="text"
                   id="telefone"
@@ -158,6 +246,7 @@ export default function TelaConfig() {
 
               <div className={styles.camposInput}>
                 <label htmlFor="endereco">Endereço:</label>
+
                 <input
                   type="text"
                   id="endereco"
@@ -169,6 +258,7 @@ export default function TelaConfig() {
 
               <div className={styles.camposInput}>
                 <label htmlFor="credencial">Credencial:</label>
+
                 <input
                   type="text"
                   id="credencial"

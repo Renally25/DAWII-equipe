@@ -42,7 +42,7 @@ export default function Pacientes() {
 
   return (
     <div className={styles.dashboardLayout}>
-      <Sidebar profile={profiles.psicologa} />
+      <Sidebar profile={profiles.psicologo} />
       <div className={styles.conteudoPrincipal}>
         <Top />
 

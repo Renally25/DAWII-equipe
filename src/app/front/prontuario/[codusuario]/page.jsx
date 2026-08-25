@@ -10,7 +10,7 @@ import Prontuario from "./prontuario";
 export default function PageProntuario() {
   return (
     <div className={styles.dashboard}>
-      <Sidebar profile={profiles.psicologa} />
+      <Sidebar profile={profiles.psicologo} />
 
       <div className={styles.container}>
         <Top />

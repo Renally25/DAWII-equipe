@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import styles from "./top.module.css";
 
@@ -5,20 +8,56 @@ export default function Top() {
   const { data: session } = useSession();
 
   const usuario = session?.user;
-  const profissao = usuario?.tipousuario.toString();
+
+  const [fotoperfil, setFotoPerfil] = useState("");
+
+  useEffect(() => {
+    async function buscarFoto() {
+      if (!usuario?.id) return;
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${usuario.id}`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Erro ao buscar foto de perfil.");
+        }
+
+        const data = await response.json();
+
+        setFotoPerfil(data.fotoperfil || "");
+      } catch (error) {
+        console.error("Erro ao buscar foto:", error);
+      }
+    }
+
+    buscarFoto();
+  }, [usuario?.id]);
+
+  const profissao = usuario?.tipousuario?.toString() || "";
+
+  const profissaoFormatada = profissao !== "fisioterapeuta"
+    ? profissao.charAt(0).toUpperCase() + profissao.slice(1) + " (a)"
+    : profissao.charAt(0).toUpperCase() + profissao.slice(1);
 
   return (
     <div className={styles.top}>
       <p>Visão Geral</p>
+
       <div className={styles.blocInfos}>
         <img
-          src="https://img.magnific.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4841.jpg?semt=ais_hybrid&w=740&q=80"
+          src={fotoperfil || "/noprofile.svg"}
           alt="avatar"
           className={styles.avatarInicial}
         />
+
         <div className={styles.subtopic}>
           <p>{usuario?.nome}</p>
-          <p  className={styles.prof}>{profissao.charAt(0).toUpperCase() + profissao.slice(1) + " (a)"}</p>
+
+          <p className={styles.prof}>
+            {profissaoFormatada}
+          </p>
         </div>
       </div>
     </div>

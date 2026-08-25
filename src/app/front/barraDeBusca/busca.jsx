@@ -4,7 +4,7 @@ import { Search } from "@deemlol/next-icons";
 export default function Busca({ busca, setBusca, onBuscar, className }) {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      onBuscar();
+      onBuscar(busca);
     }
   };
 
@@ -21,7 +21,7 @@ export default function Busca({ busca, setBusca, onBuscar, className }) {
 
       <button
         className={styles.buttonBusca}
-        onClick={onBuscar}
+        onClick={() => onBuscar(busca)}
       >
         <Search />
       </button>

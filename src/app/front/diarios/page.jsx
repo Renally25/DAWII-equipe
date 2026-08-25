@@ -39,7 +39,7 @@ export default function DiarioPage() {
   }
   return (
     <div className={styles.dashboard}>
-      <Sidebar profile={profiles.psicologa} />
+      <Sidebar profile={profiles.psicologo} />
       <div className={styles.main}>
         <Top />
 

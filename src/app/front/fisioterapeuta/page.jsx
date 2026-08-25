@@ -19,7 +19,7 @@ function Cards() {
   useEffect(() => {
     const buscarDados = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}api/Consulta?codusuario`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}api/Consulta?codConsulta`);
 
         const data = await response.json();
 

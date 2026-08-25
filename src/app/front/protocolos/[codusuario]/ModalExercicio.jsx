@@ -78,7 +78,7 @@ export default function ModalExercicio({
       let response;
 
       if (modo === "novo") {
-        response = await fetch("http://localhost:3000/api/Exercicio", {
+        response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export default function ModalExercicio({
         }
 
         response = await fetch(
-          `http://localhost:3000/api/Exercicio/${exercicio.codexercicio}`,
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio/${exercicio.codexercicio}`,
           {
             method: "PUT",
             headers: {
