@@ -13,11 +13,11 @@ export default function Top() {
 
   useEffect(() => {
     async function buscarFoto() {
-      if (!usuario?.id) return;
+      if (!usuario?.codusuario) return;
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${usuario.id}`,
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${usuario.codusuario}`,
         );
 
         if (!response.ok) {
@@ -33,7 +33,7 @@ export default function Top() {
     }
 
     buscarFoto();
-  }, [usuario?.id]);
+  }, [usuario?.codusuario]);
 
   const profissao = usuario?.tipousuario?.toString() || "";
 

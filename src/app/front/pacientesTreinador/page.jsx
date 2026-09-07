@@ -107,6 +107,10 @@ export default function Treinos() {
                         {paci.codusuario}
                       </div>
                     </td>
+                    <td>
+                      <button className={styles.addFoto} onClick={(e)=>{e.stopPropagation(); 
+                        router.push(`./addFotos/${paci.codusuario}`)}}>Add fotos</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

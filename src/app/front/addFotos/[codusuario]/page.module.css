@@ -1,0 +1,305 @@
+/* Personalização da Barra de Rolagem (Scrollbar) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #c8bfab;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a3957d;
+  border-radius: 8px;
+  border: 2px solid #c8bfab;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8c7b63;
+}
+
+/* Layout Geral */
+.dashboard {
+  display: flex;
+  height: 100vh; /* Ocupa a altura exata da tela */
+  width: 100%; /* CORREÇÃO: Evita scroll horizontal provocado por 100vw */
+  background-color: #d5cdb8;
+  overflow: hidden; /* Mantém a tela travada no tamanho da janela */
+  color: #3c3228;
+  box-sizing: border-box;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  overflow-y: auto;
+  height: 100vh; /* Mantém a rolagem interna contida */
+  box-sizing: border-box;
+}
+
+.header {
+  margin-bottom: 24px;
+  display: flex;
+}
+
+.btnVoltar {
+  background: transparent;
+  border: none;
+  color: #3b4231;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.btnVoltar:hover {
+  color: #3c3228;
+  transform: translateX(-4px);
+}
+
+.header h2 {
+  font-size: 26px;
+  color: #0e0d0d;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.subtitulo {
+  color: #6b5c4d;
+  font-size: 14px;
+  margin-bottom: 10;
+}
+
+/* Seção de Data */
+.campoData {
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fdfbf7;
+  padding: 18px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(60, 50, 40, 0.05);
+  border: 1px solid #e7dfd1;
+}
+
+.campoData label {
+  font-weight: 600;
+  color: #4a3d31;
+  font-size: 15px;
+}
+
+.campoData input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #d4c8b5;
+  background-color: #ffffff;
+  color: #3c3228;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.campoData input:focus {
+  border-color: #8c6d46;
+  box-shadow: 0 0 0 3px rgba(140, 109, 70, 0.15);
+}
+
+/* Seções Gerais */
+.secao {
+  margin-bottom: 36px;
+}
+
+.tituloSecao {
+  font-size: 20px;
+  color: #2c2219;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #c4b8a2;
+  padding-bottom: 10px;
+  font-weight: 700;
+}
+
+/* Grid de Fotos */
+.gridFotos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.cardFoto {
+  background: #fdfbf7;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 4px 12px rgba(60, 50, 40, 0.06);
+  border: 1px solid #e7dfd1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cardFoto:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(60, 50, 40, 0.1);
+}
+
+.cardFoto h4 {
+  margin: 0;
+  font-size: 15px;
+  color: #3c3228;
+  font-weight: 600;
+}
+
+.areaPreview {
+  width: 100%;
+  height: 210px;
+  border: 2px dashed #d0c4b0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #f7f3eb;
+  transition: border-color 0.2s;
+}
+
+.cardFoto:hover .areaPreview {
+  border-color: #a89478;
+}
+
+.imagemPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  color: #8c7f6f;
+  font-size: 13px;
+  text-align: center;
+}
+
+.btnUpload {
+  background-color: #656c4746;
+  color: #3b4231;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: background-color 0.2s, color 0.2s;
+  border: 1px solid #dcd1be;
+}
+
+.btnUpload:hover {
+  background-color: #656c47;
+  color: #ffffff;
+}
+
+/* Grid de Medidas */
+.gridMedidas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+}
+
+.cardMedida {
+  background: #fdfbf7;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(60, 50, 40, 0.06);
+  border: 1px solid #e7dfd1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-top: 5px solid #656c47;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cardMedida:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(60, 50, 40, 0.1);
+}
+
+.cardMedida h4 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: #2c2219;
+  font-weight: 700;
+}
+
+.grupoInput {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.grupoInput label {
+  font-size: 13px;
+  color: #5c4e40;
+  font-weight: 600;
+}
+
+.grupoInput input {
+  padding: 10px 12px;
+  border: 1px solid #d4c8b5;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #3c3228;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.grupoInput input:focus {
+  border-color: #656c47;
+  box-shadow: 0 0 0 3px rgba(140, 109, 70, 0.15);
+}
+
+.grupoInput input::placeholder {
+  color: #b5a895;
+}
+
+/* Ações e Botão Salvar */
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 32px;
+  padding-bottom: 48px; /* AUMETADO: Garante espaço extra no final da rolagem */
+  width: 100%;
+}
+
+.btnSalvar {
+  background-color: #656c47;
+  color: #ffffff;
+  border: none;
+  padding: 14px 36px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(140, 109, 70, 0.3);
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  margin-bottom: 16px; /* Margem de segurança inferior */
+}
+
+.btnSalvar:hover {
+  background-color: #3b4231;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(140, 109, 70, 0.4);
+}
+
+.btnSalvar:active {
+  transform: translateY(0);
+}

@@ -18,6 +18,18 @@
     padding: 40px;
 }
 
+.addFoto{
+    display: flex;
+    justify-self: center;
+  justify-content: center;
+  background: #656C47;
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
 .headerPacientes {
     display: flex;
     justify-content: space-between;
