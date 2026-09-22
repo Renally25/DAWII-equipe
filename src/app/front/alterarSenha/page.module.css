@@ -1,0 +1,61 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #d5cdb8;
+}
+
+.caixa {
+  width: 360px;
+  padding: 30px;
+  background: white;
+  border-radius: 10px;
+}
+
+.caixa h1 {
+  margin-bottom: 10px;
+  color: #3b4231;
+}
+
+.caixa p {
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  margin-bottom: 5px;
+  color: #3b4231;
+  font-weight: 500;
+}
+
+.input {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.button {
+  padding: 11px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 5px;
+  background: #3b4231;
+  color: white;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #656c47;
+}
+
+.mensagem {
+  margin-top: 15px;
+  color: #8b0000;
+}

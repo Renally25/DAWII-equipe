@@ -33,7 +33,7 @@ export default function TelaConfig() {
   async function mostrarInformacoes(codusuario) {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`,
       );
 
       if (!response.ok) {
@@ -94,7 +94,6 @@ export default function TelaConfig() {
 
   async function atualizarInformacoes() {
     try {
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`,
         {
@@ -103,7 +102,7 @@ export default function TelaConfig() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -121,7 +120,7 @@ export default function TelaConfig() {
           {
             method: "PUT",
             body: formData,
-          }
+          },
         );
 
         if (!fotoResponse.ok) {
@@ -156,6 +155,41 @@ export default function TelaConfig() {
 
   const profissao = data.tipousuario;
 
+  const alterarSenha = async () => {
+  if (!data.email) {
+    alert("Digite seu email primeiro.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          acao: "solicitarRedefinicao",
+          email: data.email,
+        }),
+      },
+    );
+
+    const resultado = await response.json();
+
+    if (!response.ok) {
+      alert(resultado.error || "Não foi possível enviar o email.");
+      return;
+    }
+
+    alert("Enviamos um link para o seu email.");
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao conectar com o servidor.");
+  }
+}; 
+
   return (
     <div className={styles.dashboard}>
       <Sidebar profile={profiles[profissao]} />
@@ -167,19 +201,14 @@ export default function TelaConfig() {
           <div className={styles.header}>
             <h1>Configurações</h1>
 
-            <button onClick={atualizarInformacoes}>
-              Salvar Alterações
-            </button>
+            <button onClick={atualizarInformacoes}>Salvar Alterações</button>
           </div>
 
           <div className={styles.fotoPerfil}>
             <h1>Foto de Perfil</h1>
 
             <div className={styles.fotoElements}>
-              <img
-                src={fotoPreview || "/noprofile.svg"}
-                alt="Foto de perfil"
-              />
+              <img src={fotoPreview || "/noprofile.svg"} alt="Foto de perfil" />
 
               <input
                 type="file"
@@ -194,11 +223,17 @@ export default function TelaConfig() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    document.getElementById("fotoPerfil").click()
-                  }
+                  className={styles.botao}
+                  onClick={() => document.getElementById("fotoPerfil").click()}
                 >
                   Alterar foto
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={alterarSenha}
+                >
+                  Alterar Senha
                 </button>
               </div>
             </div>

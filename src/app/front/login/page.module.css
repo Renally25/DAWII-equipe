@@ -96,3 +96,23 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.senhaWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.togglePass {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+  color: #3b4231;
+  font-size: 13px;
+  font-weight: 600;
+}
