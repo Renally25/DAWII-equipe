@@ -37,7 +37,9 @@ export default function LoginPage() {
 
     const tipo = session?.user?.tipousuario;
 
-    if (tipo === "psicologo") {
+    if (session.user.eh_admin === true) {
+  router.push("/front/admin");
+    } else if (tipo === "psicologo") {
       router.push("/front/psicologa");
     } else if (tipo === "treinador") {
       router.push("/front/treinador");

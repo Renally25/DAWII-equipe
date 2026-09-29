@@ -7,6 +7,7 @@ export const authOptions = {
   pages: {
     signIn: "/front/login",
   },
+
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -26,13 +27,13 @@ export const authOptions = {
 
       async authorize(credentials) {
         try {
-          console.log("LOGIN:", credentials.email);
+          console.log("LOGIN:", credentials?.email);
 
           if (!credentials?.email || !credentials?.senha) {
             return null;
           }
 
-          // Busca usuário no banco
+          // Busca o usuário no banco
           const resultado = await pool.query(
             `
             SELECT 
@@ -41,6 +42,7 @@ export const authOptions = {
               email,
               senha,
               tipousuario,
+              eh_admin,
               ativo
             FROM Usuario
             WHERE email = $1
@@ -50,19 +52,28 @@ export const authOptions = {
           );
 
           const usuario = resultado.rows[0];
+
           console.log("USUARIO DO BANCO:", usuario);
 
+          // Usuário não encontrado
           if (!usuario) {
             console.log("Usuário não encontrado");
             return null;
           }
 
+          // Usuário desativado
           if (!usuario.ativo) {
             console.log("Usuário desativado");
             return null;
           }
 
-          // Compara senha digitada com hash do banco
+          // Verifica se existe senha cadastrada
+          if (!usuario.senha) {
+            console.log("Usuário não possui senha cadastrada");
+            return null;
+          }
+
+          // Compara a senha digitada com o hash armazenado
           const senhaValida = await bcrypt.compare(
             credentials.senha,
             usuario.senha,
@@ -80,13 +91,16 @@ export const authOptions = {
             nome: usuario.nome,
             email: usuario.email,
             tipousuario: usuario.tipousuario,
+            eh_admin: usuario.eh_admin,
           });
-          // O que retorna aqui vai para o JWT
+
+          // Usuário autenticado
           return {
             id: usuario.codusuario,
             nome: usuario.nome,
             email: usuario.email,
             tipousuario: usuario.tipousuario,
+            eh_admin: usuario.eh_admin,
           };
         } catch (error) {
           console.error("Erro no login:", error);
@@ -97,29 +111,34 @@ export const authOptions = {
   ],
 
   callbacks: {
+    // Coloca os dados do usuário dentro do JWT
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.nome = user.nome;
         token.email = user.email;
         token.tipousuario = user.tipousuario;
+        token.eh_admin = user.eh_admin;
       }
 
       return token;
     },
 
+    // Coloca os dados do JWT dentro da sessão
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id;
         session.user.nome = token.nome;
         session.user.email = token.email;
         session.user.tipousuario = token.tipousuario;
+        session.user.eh_admin = token.eh_admin;
       }
 
       return session;
     },
   },
 
+  // Utiliza JWT para armazenar a sessão
   session: {
     strategy: "jwt",
   },

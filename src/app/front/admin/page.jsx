@@ -103,7 +103,7 @@ export function Formulario() {
           rua: rua,
           numero: numero,
           telefone: telefone,
-          tipoUsuario: tipo,
+          tipousuario: tipo,
         }),
       },
     );
