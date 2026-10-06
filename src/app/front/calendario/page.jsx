@@ -10,9 +10,10 @@ import HeaderCalendario from "./headerCalendario";
 import { profiles } from "../sidebar/profiles";
 import { useSession } from "next-auth/react";
 
-export default function pagCalendarioPsico() {
-    const { data: session, status } = useSession();
-    const [data, setData] = useState({
+export default function pagCalendario() {
+  const { data: session, status } = useSession();
+
+  const [data, setData] = useState({
     tipousuario: "",
   });
 
@@ -25,7 +26,7 @@ export default function pagCalendarioPsico() {
   async function mostrarInformacoes(codusuario) {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`,
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`
       );
 
       if (!response.ok) {
@@ -37,19 +38,20 @@ export default function pagCalendarioPsico() {
       setData({
         tipousuario: usuario.tipousuario,
       });
-
     } catch (error) {
       console.error(error);
     }
   }
 
-    const profissao = data.tipousuario;
+  const profissao = data.tipousuario;
 
   return (
     <div className={styles.container}>
       <Sidebar profile={profiles[profissao]} />
+
       <div>
         <Top />
+
         <main>
           <Calendario />
         </main>
@@ -59,55 +61,71 @@ export default function pagCalendarioPsico() {
 }
 
 export function Calendario() {
+  const { data: session, status } = useSession();
+
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentMonth, setCurrentMonth] = useState(new Date()); // mês que o calendário mostra
-  const days = buildMonthGrid(
-    currentMonth.getFullYear(),
-    currentMonth.getMonth(),
-  ); // célula na grade
-  const hoje = new Date();
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const days = buildMonthGrid(
+    currentMonth.getFullYear(),
+    currentMonth.getMonth()
+  );
+
+  const hoje = new Date();
+
   const eventsByDate = useMemo(() => {
     const indice = {};
+
     events.forEach((event) => {
       const key = event.date;
+
       if (!indice[key]) {
         indice[key] = [];
       }
+
       indice[key].push(event);
     });
+
     return indice;
-  }, [events]); //só renderiza se houver mudança em events
+  }, [events]);
 
   async function buscarConsultas() {
+    if (!session?.user?.id) {
+      return;
+    }
+
     try {
-      const result = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta`);
+      setLoading(true);
+
+      const result = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta?codusuario=${session.user.id}`
+      );
 
       if (!result.ok) {
-        throw new Error("Erro ao buscar consultas"); //vai automaticamente para o catch
+        throw new Error("Erro ao buscar consultas");
       }
 
-      const data = await result.json();
-      setEvents(data.consultas);
+      const resposta = await result.json();
 
-      setLoading(false);
+      setEvents(resposta.consultas || []);
     } catch (error) {
       console.error(error);
+      setEvents([]);
+    } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    // async dentro do effect para evitar setState direto no corpo do useEffect
-    const carregar = async () => {
-      await buscarConsultas();
-    };
-    carregar();
-  }, []);
+    if (status === "authenticated" && session?.user?.id) {
+      buscarConsultas();
+    }
+  }, [status, session]);
 
-  if (loading) {
+  if (status === "loading" || loading) {
     return <p>Carregando consultas...</p>;
   }
 
@@ -117,6 +135,7 @@ export function Calendario() {
         currentMonth={currentMonth}
         setCurrentMonth={setCurrentMonth}
       />
+
       <section className={styles.calendar}>
         <div>DOM</div>
         <div>SEG</div>
@@ -126,30 +145,31 @@ export function Calendario() {
         <div>SEX</div>
         <div>SÁB</div>
 
-        {days.map(
-          (
-            day, //.map params: elementoAtual(obrigatorio), indice(opcional), arrayCompleto(opcional)
-          ) => {
-            const isSelected = isSameDay(day, selectedDate);
-            const key = day.toISOString().split("T")[0];
-            const dayEvents = eventsByDate[key] || [];
-            const isCurrentMonth =
-              day.getMonth() === currentMonth.getMonth() &&
-              day.getFullYear() === currentMonth.getFullYear(); //compara o mes selecionado e o mes da célula
-            const isToday = isSameDay(day, hoje);
-            return (
-              <CelulaDia
-                key={day.toISOString()}
-                day={day}
-                events={dayEvents}
-                selected={isSelected}
-                onClick={() => setSelectedDate(day)}
-                isCurrentMonth={isCurrentMonth}
-                isToday={isToday}
-              />
-            );
-          },
-        )}
+        {days.map((day) => {
+          const isSelected = isSameDay(day, selectedDate);
+
+          const key = day.toISOString().split("T")[0];
+
+          const dayEvents = eventsByDate[key] || [];
+
+          const isCurrentMonth =
+            day.getMonth() === currentMonth.getMonth() &&
+            day.getFullYear() === currentMonth.getFullYear();
+
+          const isToday = isSameDay(day, hoje);
+
+          return (
+            <CelulaDia
+              key={day.toISOString()}
+              day={day}
+              events={dayEvents}
+              selected={isSelected}
+              onClick={() => setSelectedDate(day)}
+              isCurrentMonth={isCurrentMonth}
+              isToday={isToday}
+            />
+          );
+        })}
       </section>
     </div>
   );

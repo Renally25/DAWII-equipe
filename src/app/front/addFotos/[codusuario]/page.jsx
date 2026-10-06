@@ -87,9 +87,6 @@ export default function AddFotos() {
 
         const texto = await response.text();
 
-        console.log("Status:", response.status);
-        console.log("Resposta:", texto);
-
         if (!response.ok) {
           throw new Error(`Erro ${response.status}: ${texto}`);
         }
@@ -155,7 +152,6 @@ export default function AddFotos() {
           );
         }
 
-        console.log(`Foto ${angulo} salva:`, resultado);
       }
       //SALVAR A AVALIAÇÃO
 
@@ -164,8 +160,6 @@ export default function AddFotos() {
         dataAvaliacao,
         medidas,
       };
-
-      console.log("Enviando Dados da Avaliação:", payload);
 
       const avaliacaoResponse = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/AvaliacaoAntropometrica`, {
         method: "POST",
@@ -193,8 +187,6 @@ export default function AddFotos() {
             "Erro ao salvar avaliação antropométrica.",
         );
       }
-
-      console.log("✅ Avaliação salva:", avaliacaoResultado);
 
       alert("Avaliação antropométrica e fotos gravadas com sucesso!");
 

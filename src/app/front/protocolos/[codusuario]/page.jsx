@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Sidebar from "../../sidebar/sidebar";
 import Top from "../../top/top";
 import PainelPaciente from "./PainelPaciente";
@@ -14,9 +15,10 @@ import styles from "../../treino/[codusuario]/treino.module.css";
 export default function TelaProtocolo() {
   const params = useParams();
   const codusuario = params.codusuario;
-  const COD_FISIOTERAPEUTA = 103; // Altere para um codusuario existente na tabela Fisioterapeuta
-  console.log("Params:", params);
-  console.log("Codusuario:", codusuario);
+
+  const { data: session } = useSession();
+
+  const codfisioterapeuta = session?.user?.id;
 
   const [paciente, setPaciente] = useState(null);
   const [protocolo, setProtocolo] = useState({});
@@ -30,17 +32,18 @@ export default function TelaProtocolo() {
   const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
 
   const [mostrarNovoProtocolo, setMostrarNovoProtocolo] = useState(false);
+
   const [novoProtocolo, setNovoProtocolo] = useState({
     descricao: "",
     dataprotocolo: "",
   });
 
   useEffect(() => {
-    if (codusuario) {
+    if (codusuario && codfisioterapeuta) {
       carregarPaciente();
       carregarProtocolos();
     }
-  }, [codusuario]);
+  }, [codusuario, codfisioterapeuta]);
 
   async function carregarPaciente() {
     try {
@@ -48,9 +51,12 @@ export default function TelaProtocolo() {
         `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${codusuario}`,
       );
 
-      if (!response.ok) throw new Error("Erro ao carregar paciente");
+      if (!response.ok) {
+        throw new Error("Erro ao carregar paciente");
+      }
 
       const data = await response.json();
+
       setPaciente(data);
     } catch (err) {
       console.log("Erro ao carregar paciente:", err);
@@ -58,49 +64,52 @@ export default function TelaProtocolo() {
   }
 
   async function selecionarProtocolo(protocolo) {
-  setProtocoloSelecionado(protocolo);
-  setDiaSelecionado(protocolo.descricao);
+    setProtocoloSelecionado(protocolo);
+    setDiaSelecionado(protocolo.descricao);
 
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio?codprotocolo=${protocolo.codprotocolo}`
-    );
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio?codprotocolo=${protocolo.codprotocolo}`,
+      );
 
-    if (!response.ok) {
-      throw new Error("Erro ao carregar exercícios");
+      if (!response.ok) {
+        throw new Error("Erro ao carregar exercícios");
+      }
+
+      const exercicios = await response.json();
+
+      setProtocolo((prev) => ({
+        ...prev,
+        [protocolo.descricao]: {
+          exercicios,
+        },
+      }));
+    } catch (err) {
+      console.error("Erro ao carregar exercícios:", err);
+
+      setProtocolo((prev) => ({
+        ...prev,
+        [protocolo.descricao]: {
+          exercicios: [],
+        },
+      }));
+    } finally {
+      setLoading(false);
     }
-
-    const exercicios = await response.json();
-
-    setProtocolo((prev) => ({
-      ...prev,
-      [protocolo.descricao]: {
-        exercicios,
-      },
-    }));
-  } catch (err) {
-    console.error("Erro ao carregar exercícios:", err);
-
-    setProtocolo((prev) => ({
-      ...prev,
-      [protocolo.descricao]: {
-        exercicios: [],
-      },
-    }));
-  } finally {
-    setLoading(false);
   }
-}
 
   async function carregarProtocolos() {
     try {
-const response = await fetch(
-  `${process.env.NEXT_PUBLIC_AUTH_API}/api/Protocolo?codfisioterapeuta=${COD_FISIOTERAPEUTA}`,
-);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Protocolo?codusuario=${codusuario}`,
+      );
 
-      if (!response.ok) throw new Error("Erro ao carregar protocolos");
+      if (!response.ok) {
+        throw new Error("Erro ao carregar protocolos");
+      }
 
       const data = await response.json();
+
       setProtocolos(data);
 
       if (data.length > 0) {
@@ -119,34 +128,48 @@ const response = await fetch(
       alert("Por favor, informe a descrição do protocolo");
       return;
     }
+
     if (!novoProtocolo.dataprotocolo) {
       alert("Por favor, informe a data do protocolo");
       return;
     }
 
+    if (!codfisioterapeuta) {
+      alert("Fisioterapeuta não identificado");
+      return;
+    }
+
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Protocolo`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Protocolo`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            descricao: novoProtocolo.descricao.trim(),
+            dataprotocolo: novoProtocolo.dataprotocolo,
+            codfisioterapeuta: codfisioterapeuta,
+            codusuario: codusuario,
+          }),
         },
-        body: JSON.stringify({
-          descricao: novoProtocolo.descricao.trim(),
-          dataprotocolo: novoProtocolo.dataprotocolo,
-          codfisioterapeuta: COD_FISIOTERAPEUTA,
-        }),
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
+
         throw new Error(
-          errorData.error || errorData.details || "Erro ao criar protocolo",
+          errorData.error ||
+            errorData.details ||
+            "Erro ao criar protocolo",
         );
       }
 
       await carregarProtocolos();
 
       setMostrarNovoProtocolo(false);
+
       setNovoProtocolo({
         descricao: "",
         dataprotocolo: "",
@@ -155,6 +178,7 @@ const response = await fetch(
       alert("Protocolo criado com sucesso!");
     } catch (err) {
       console.log("Erro ao criar protocolo:", err);
+
       alert(err.message || "Erro ao criar protocolo");
     }
   }
@@ -164,6 +188,7 @@ const response = await fetch(
       alert("Crie um protocolo primeiro antes de adicionar exercícios");
       return;
     }
+
     setModoModal("novo");
     setExercicioSelecionado(null);
     setModalAberto(true);
@@ -176,19 +201,23 @@ const response = await fetch(
   }
 
   async function excluirExercicio(codexercicio) {
-    const confirmar = confirm("Tem certeza que deseja excluir este exercício?");
+    const confirmar = confirm(
+      "Tem certeza que deseja excluir este exercício?",
+    );
 
     if (!confirmar) return;
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_AUTH_API}api/Exercicio/${codexercicio}`,
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio/${codexercicio}`,
         {
           method: "DELETE",
         },
       );
 
-      if (!response.ok) throw new Error("Erro ao excluir exercício");
+      if (!response.ok) {
+        throw new Error("Erro ao excluir exercício");
+      }
 
       if (protocoloSelecionado) {
         await selecionarProtocolo(protocoloSelecionado);
@@ -197,6 +226,7 @@ const response = await fetch(
       alert("Exercício excluído com sucesso!");
     } catch (err) {
       console.log("Erro ao excluir exercício:", err);
+
       alert("Erro ao excluir exercício");
     }
   }
@@ -204,11 +234,15 @@ const response = await fetch(
   if (loading) {
     return (
       <div className={styles.dashboard}>
-        <Sidebar profile={profiles.treinador} />
+        <Sidebar profile={profiles.fisioterapeuta} />
+
         <div className={styles.main}>
           <Top />
+
           <div className={styles.container}>
-            <div className={styles.loading}>Carregando...</div>
+            <div className={styles.loading}>
+              Carregando...
+            </div>
           </div>
         </div>
       </div>
@@ -217,7 +251,7 @@ const response = await fetch(
 
   return (
     <div className={styles.dashboard}>
-      <Sidebar profile={profiles.treinador} />
+      <Sidebar profile={profiles.fisioterapeuta} />
 
       <div className={styles.main}>
         <Top />
@@ -225,28 +259,40 @@ const response = await fetch(
         <div className={styles.container}>
           <div className={styles.left}>
             <PainelPaciente paciente={paciente} />
+
             <ListaProtocolos
               protocolos={protocolos}
               protocoloSelecionado={protocoloSelecionado}
               selecionarProtocolo={selecionarProtocolo}
-              onCriarProtocolo={() => setMostrarNovoProtocolo(true)}
+              onCriarProtocolo={() =>
+                setMostrarNovoProtocolo(true)
+              }
             />
+
             {mostrarNovoProtocolo && (
               <div className={styles.novoTreinoCard}>
                 <h4>Novo Protocolo</h4>
+
                 <input
                   type="text"
-                  placeholder="Descrição (ex: Treino A - Fortalecimento de Lombar)"
+                  placeholder="Descrição (ex: Fortalecimento de Lombar)"
                   value={novoProtocolo.descricao}
                   onChange={(e) =>
-                    setNovoProtocolo({ ...novoProtocolo, descricao: e.target.value })
+                    setNovoProtocolo({
+                      ...novoProtocolo,
+                      descricao: e.target.value,
+                    })
                   }
                 />
+
                 <input
                   type="date"
                   value={novoProtocolo.dataprotocolo}
                   onChange={(e) =>
-                    setNovoProtocolo({ ...novoProtocolo, dataprotocolo: e.target.value })
+                    setNovoProtocolo({
+                      ...novoProtocolo,
+                      dataprotocolo: e.target.value,
+                    })
                   }
                 />
 
@@ -255,6 +301,7 @@ const response = await fetch(
                     className={styles.cancelar}
                     onClick={() => {
                       setMostrarNovoProtocolo(false);
+
                       setNovoProtocolo({
                         descricao: "",
                         dataprotocolo: "",
@@ -263,7 +310,11 @@ const response = await fetch(
                   >
                     Cancelar
                   </button>
-                  <button className={styles.salvar} onClick={criarNovoProtocolo}> 
+
+                  <button
+                    className={styles.salvar}
+                    onClick={criarNovoProtocolo}
+                  >
                     Criar Protocolo
                   </button>
                 </div>

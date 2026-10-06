@@ -1,45 +1,116 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+
 import styles from "../psicologa/dashboard.module.css";
 import cardsStyles from "../psicologa/cards.module.css";
 import alertasStyles from "../psicologa/alertas.module.css";
-import Link from "next/link";
+
 import Sidebar from "../sidebar/sidebar";
 import { profiles } from "../sidebar/profiles";
-
 import Top from "../top/top";
 
-function Cards() {
+function Cards({ codfisioterapeuta }) {
   const [dados, setDados] = useState({
     totalPacientes: 0,
     consultasHoje: 0,
   });
 
   useEffect(() => {
+    if (!codfisioterapeuta) {
+      return;
+    }
+
     const buscarDados = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}api/Consulta?codConsulta`);
 
-        const data = await response.json();
+        const responseAlunos = await fetch(
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Aluno_Paciente`,
+        );
 
-        const hoje = new Date().toISOString().split("T")[0];
+        if (!responseAlunos.ok) {
+          throw new Error("Erro ao buscar pacientes.");
+        }
 
-        const consultasHoje = (data.consultas || []).filter(
-          (consulta) => consulta.dataconsulta?.split("T")[0] === hoje,
-        ).length;
+        const dataAlunos = await responseAlunos.json();
 
-        setDados({
-          totalPacientes: data.pacientes ? data.pacientes.length : 0,
-          consultasHoje,
+        const alunos = dataAlunos.pacientes || [];
+
+        setDados((anterior) => ({
+          ...anterior,
+          totalPacientes: alunos.length,
+        }));
+
+        const consultasPorAluno = await Promise.all(
+          alunos.map(async (aluno) => {
+            try {
+              const responseConsulta = await fetch(
+                `${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta?codusuario=${aluno.codusuario}`,
+              );
+
+              if (!responseConsulta.ok) {
+                return [];
+              }
+
+              const dataConsulta = await responseConsulta.json();
+
+              if (Array.isArray(dataConsulta)) {
+                return dataConsulta;
+              }
+
+              return dataConsulta.consultas || [];
+            } catch (error) {
+              console.error(
+                `Erro ao buscar consultas do paciente ${aluno.codusuario}:`,
+                error,
+              );
+
+              return [];
+            }
+          }),
+        );
+
+        const todasConsultas = consultasPorAluno.flat();
+
+        const consultasFisioterapeuta = todasConsultas.filter(
+          (consulta) =>
+            Number(consulta.codfisioterapeuta) === Number(codfisioterapeuta) &&
+            consulta.status === "agendada",
+        );
+
+        const hoje = new Date();
+
+        const ano = hoje.getFullYear();
+
+        const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+
+        const dia = String(hoje.getDate()).padStart(2, "0");
+
+        const dataHoje = `${ano}-${mes}-${dia}`;
+
+        const consultasHoje = consultasFisioterapeuta.filter((consulta) => {
+          if (!consulta.dataconsulta) {
+            return false;
+          }
+
+          const dataConsulta = String(consulta.dataconsulta).split("T")[0];
+
+          return dataConsulta === dataHoje;
         });
+
+        setDados((anterior) => ({
+          ...anterior,
+          consultasHoje: consultasHoje.length,
+        }));
       } catch (error) {
         console.error("Erro ao buscar dashboard:", error);
       }
     };
 
     buscarDados();
-  }, []);
+  }, [codfisioterapeuta]);
 
   return (
     <div className={cardsStyles.container}>
@@ -58,32 +129,109 @@ function Cards() {
 
         <span className={cardsStyles.descricao}>Agendadas para hoje</span>
       </div>
-
     </div>
   );
 }
 
-function Alertas() {
-  const [data, setData] = useState({ consultas: [] });
-
-  const pegarConsults = async () => {
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta`);
-      const dataConsults = await response.json();
-
-      setData(dataConsults);
-    } catch (error) {
-      console.log("Erro ao mostrar consultas:", error);
-    }
-  };
+function Alertas({ codfisioterapeuta }) {
+  const [data, setData] = useState({
+    consultas: [],
+  });
 
   useEffect(() => {
-    const carregar = async () => {
-      await pegarConsults();
-    };
-    carregar();
-  }, []);
+    if (!codfisioterapeuta) {
+      return;
+    }
 
+    const pegarConsultas = async () => {
+      try {
+
+        const responseAlunos = await fetch(
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Aluno_Paciente`,
+        );
+
+        if (!responseAlunos.ok) {
+          throw new Error("Erro ao buscar pacientes.");
+        }
+
+        const dataAlunos = await responseAlunos.json();
+
+        const alunos = dataAlunos.pacientes || [];
+
+        const consultasPorAluno = await Promise.all(
+          alunos.map(async (aluno) => {
+            try {
+              const responseConsulta = await fetch(
+                `${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta?codusuario=${aluno.codusuario}`,
+              );
+
+              if (!responseConsulta.ok) {
+                return [];
+              }
+
+              const dataConsulta = await responseConsulta.json();
+
+              if (Array.isArray(dataConsulta)) {
+                return dataConsulta;
+              }
+
+              return dataConsulta.consultas || [];
+            } catch (error) {
+              console.error(
+                `Erro ao buscar consultas do paciente ${aluno.codusuario}:`,
+                error,
+              );
+
+              return [];
+            }
+          }),
+        );
+
+        const todasConsultas = consultasPorAluno.flat();
+
+        const consultasFisioterapeuta = todasConsultas.filter(
+          (consulta) =>
+            Number(consulta.codfisioterapeuta) === Number(codfisioterapeuta) &&
+            consulta.status === "agendada",
+        );
+
+        const consultasComPaciente = consultasFisioterapeuta.map((consulta) => {
+          const paciente = alunos.find(
+            (aluno) => Number(aluno.codusuario) === Number(consulta.codusuario),
+          );
+
+          return {
+            ...consulta,
+            nome: paciente?.nome || "Paciente",
+          };
+        });
+
+        consultasComPaciente.sort((a, b) => {
+          const dataA = new Date(
+            `${String(a.dataconsulta).split("T")[0]}T${
+              a.horaconsulta
+            }`,
+          );
+
+          const dataB = new Date(
+            `${String(b.dataconsulta).split("T")[0]}T${
+              b.horaconsulta
+            }`,
+          );
+
+          return dataA - dataB;
+        });
+
+        setData({
+          consultas: consultasComPaciente,
+        });
+      } catch (error) {
+        console.error("Erro ao mostrar consultas:", error);
+      }
+    };
+
+    pegarConsultas();
+  }, [codfisioterapeuta]);
 
   return (
     <div className={alertasStyles.alertas}>
@@ -96,22 +244,28 @@ function Alertas() {
       </div>
 
       <ul className={alertasStyles.lista}>
-        {(data.consultas || []).slice(0, 4).map((alerta) => (
+        {data.consultas.slice(0, 4).map((alerta) => (
           <li key={alerta.codconsulta} className={alertasStyles.listaAlertas}>
             <div className={alertasStyles.avatarInicial}>
-              {String(alerta?.nome || alerta?.paciente || "Paciente").charAt(0).toUpperCase()}
+              {String(alerta.nome || "Paciente")
+                .charAt(0)
+                .toUpperCase()}
             </div>
 
             <div className={alertasStyles.alertaConteudo}>
               <div className={alertasStyles.alertaTopo}>
-                <span className={alertasStyles.alertaNome}>Consulta</span>
+                <span className={alertasStyles.alertaNome}>{alerta.nome}</span>
 
                 <span className={alertasStyles.alertaData}>
-                  {new Date(alerta.dataconsulta).toLocaleDateString("pt-BR")}
+                  {alerta.dataconsulta
+                    ? new Date(alerta.dataconsulta).toLocaleDateString("pt-BR")
+                    : ""}
                 </span>
               </div>
 
-              <p className={alertasStyles.alertaTexto}>{alerta.observacoes}</p>
+              <p className={alertasStyles.alertaTexto}>
+                {alerta.observacoes || "Consulta agendada"}
+              </p>
 
               <span className={alertasStyles.alertaHora}>
                 {alerta.horaconsulta?.slice(0, 5)}
@@ -124,19 +278,34 @@ function Alertas() {
   );
 }
 
+
 export default function FisioterapeutaPage() {
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <p>Carregando...</p>;
+  }
+
+  if (!session) {
+    return <p>Carregando...</p>;
+  }
+
+  const codfisioterapeuta = session.user.id;
+
   return (
     <div className={styles.dashboard}>
       <Sidebar profile={profiles.fisioterapeuta} />
 
-      <div>
+      <div className={styles.wrapperPrincipal}>
         <Top />
-        <div className={styles.containerPrincipal}>
-          <Cards />
+
+        <main className={styles.containerPrincipal}>
+          <Cards codfisioterapeuta={codfisioterapeuta} />
+
           <div className={styles.conteudo}>
-            <Alertas />
+            <Alertas codfisioterapeuta={codfisioterapeuta} />
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

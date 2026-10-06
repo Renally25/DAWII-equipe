@@ -61,7 +61,6 @@ export default function TelaConfig() {
         setFotoPreview(usuario.fotoperfil);
       }
 
-      console.log(usuario);
     } catch (error) {
       console.error(error);
     }

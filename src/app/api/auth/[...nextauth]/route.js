@@ -27,7 +27,6 @@ export const authOptions = {
 
       async authorize(credentials) {
         try {
-          console.log("LOGIN:", credentials?.email);
 
           if (!credentials?.email || !credentials?.senha) {
             return null;
@@ -53,7 +52,6 @@ export const authOptions = {
 
           const usuario = resultado.rows[0];
 
-          console.log("USUARIO DO BANCO:", usuario);
 
           // Usuário não encontrado
           if (!usuario) {
@@ -79,20 +77,10 @@ export const authOptions = {
             usuario.senha,
           );
 
-          console.log("SENHA VALIDA:", senhaValida);
-
           if (!senhaValida) {
             console.log("Senha incorreta");
             return null;
           }
-
-          console.log("RETORNANDO USUARIO:", {
-            id: usuario.codusuario,
-            nome: usuario.nome,
-            email: usuario.email,
-            tipousuario: usuario.tipousuario,
-            eh_admin: usuario.eh_admin,
-          });
 
           // Usuário autenticado
           return {
