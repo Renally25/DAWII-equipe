@@ -13,16 +13,15 @@ export default function Top() {
 
   useEffect(() => {
     async function buscarFoto() {
-      if (!usuario?.codusuario) return;
+      const id = usuario?.id;
+      if (!id) return;
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${usuario.codusuario}`,
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario/${id}`,
         );
 
-        if (!response.ok) {
-          throw new Error("Erro ao buscar foto de perfil.");
-        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const data = await response.json();
 
@@ -33,13 +32,16 @@ export default function Top() {
     }
 
     buscarFoto();
-  }, [usuario?.codusuario]);
+    window.addEventListener("foto-atualizada", buscarFoto);
+    return () => window.removeEventListener("foto-atualizada", buscarFoto);
+  }, [usuario?.id]);
 
   const profissao = usuario?.tipousuario?.toString() || "";
 
-  const profissaoFormatada = profissao !== "fisioterapeuta"
-    ? profissao.charAt(0).toUpperCase() + profissao.slice(1) + " (a)"
-    : profissao.charAt(0).toUpperCase() + profissao.slice(1);
+  const profissaoFormatada =
+    profissao !== "fisioterapeuta"
+      ? profissao.charAt(0).toUpperCase() + profissao.slice(1) + " (a)"
+      : profissao.charAt(0).toUpperCase() + profissao.slice(1);
 
   return (
     <div className={styles.top}>
@@ -55,9 +57,7 @@ export default function Top() {
         <div className={styles.subtopic}>
           <p>{usuario?.nome}</p>
 
-          <p className={styles.prof}>
-            {profissaoFormatada}
-          </p>
+          <p className={styles.prof}>{profissaoFormatada}</p>
         </div>
       </div>
     </div>
