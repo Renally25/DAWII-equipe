@@ -341,7 +341,7 @@ export function Usuarios({ filtro }) {
         `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`,
       );
       const dataUser = await response.json();
-
+      
       setdata(dataUser);
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
