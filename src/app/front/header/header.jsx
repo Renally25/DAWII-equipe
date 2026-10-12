@@ -6,7 +6,6 @@ import styles from "./header.module.css";
 export default function Header() {
   return (
     <header className={styles.header}>
-      {/* .conteudo tem a mesma largura máxima da página, então tudo alinha */}
       <div className={styles.conteudo}>
         <div className={styles.marca}>
           <img
@@ -19,7 +18,6 @@ export default function Header() {
           <h1 className={styles.titulo}>Página do administrador</h1>
         </div>
 
-        {/* Se o seu fluxo de logout for outro, troque o onClick */}
         <button
           type="button"
           className={styles.sair}

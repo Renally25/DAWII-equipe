@@ -14,8 +14,6 @@ import cardsStyles from "./cards.module.css";
 import alertasStyles from "./alertas.module.css";
 import diariosStyles from "./diariosRecentes.module.css";
 
-/* ---------- Helpers de data ---------- */
-
 // Lê "2026-06-26" ou "2026-06-26T00:00:00" como data LOCAL.
 // (new Date("2026-06-26") interpreta como UTC e pode mostrar o dia anterior.)
 function lerData(valor) {
@@ -40,7 +38,6 @@ function mesAbreviado(data) {
     .replace(".", "");
 }
 
-/* ---------- Diários recentes ---------- */
 
 function DiariosRecentes() {
   const [diarios, setDiarios] = useState([]);
@@ -132,7 +129,6 @@ function DiariosRecentes() {
   );
 }
 
-/* ---------- Indicadores ---------- */
 
 function Cards({ codpsicologo }) {
   const [dados, setDados] = useState({
@@ -324,7 +320,6 @@ function Cards({ codpsicologo }) {
   );
 }
 
-/* ---------- Próximas consultas ---------- */
 
 function Alertas({ codpsicologo }) {
   const [data, setData] = useState({
@@ -450,7 +445,6 @@ function Alertas({ codpsicologo }) {
 
           return (
             <li key={alerta.codconsulta} className={alertasStyles.listaAlertas}>
-              {/* Bloco de data: o texto "Hoje" garante que a cor não é o único sinal */}
               {dataConsulta && (
                 <time
                   dateTime={String(alerta.dataconsulta).split("T")[0]}
@@ -490,7 +484,6 @@ function Alertas({ codpsicologo }) {
   );
 }
 
-/* ---------- Página ---------- */
 
 export default function PsicologaGeral() {
   const { data: session, status } = useSession();
@@ -513,13 +506,6 @@ export default function PsicologaGeral() {
     return <h1 className={styles.mensagemTela}>Acesso negado</h1>;
   }
 
-  /*
-   * O NextAuth coloca o código do usuário
-   * em session.user.id.
-   *
-   * Portanto, para a psicóloga:
-   * session.user.id = codpsicologo
-   */
 
   const codpsicologo = session.user.id;
 

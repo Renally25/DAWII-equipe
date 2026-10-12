@@ -6,8 +6,6 @@
   background: var(--areia);
   color: var(--texto);
 }
-
-/* Antes faltava min-width: 0, e o conteúdo podia estourar a largura */
 .main {
   flex: 1;
   min-width: 0;
@@ -25,7 +23,6 @@
   overflow: hidden;
 }
 
-/* ---------- Painel esquerdo ---------- */
 
 .left {
   width: 30%;
@@ -38,7 +35,6 @@
   overflow-y: auto;
 }
 
-/* ---------- Painel direito ---------- */
 
 .right {
   flex: 1;
@@ -58,7 +54,6 @@
   scrollbar-color: var(--borda-input) transparent;
 }
 
-/* ---------- Aviso (substitui os alert()) ---------- */
 
 .aviso {
   margin: 16px 32px 0;
@@ -80,7 +75,6 @@
   color: var(--oliva);
 }
 
-/* ---------- Formulário de novo treino ---------- */
 
 .novoTreinoCard {
   padding: 20px;
@@ -203,8 +197,6 @@
   font-size: 18px;
   color: var(--texto);
 }
-
-/* ---------- Telas estreitas: empilha e libera a rolagem da página ---------- */
 
 @media (max-width: 1000px) {
   .dashboard {

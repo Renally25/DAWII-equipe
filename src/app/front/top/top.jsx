@@ -5,7 +5,6 @@ import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import styles from "./top.module.css";
 
-/* Título da topbar conforme a rota (antes era sempre "Visão Geral") */
 const TITULOS = {
   pacientes: "Pacientes",
   pacientesTreinador: "Pacientes",
@@ -21,7 +20,6 @@ const TITULOS = {
 };
 
 function tituloDaRota(pathname) {
-  // Ignora números (ex.: /prontuario/100) e usa o último trecho "de texto"
   const trechos = String(pathname || "")
     .split("/")
     .filter((t) => t && !/^\d+$/.test(t));
@@ -30,11 +28,10 @@ function tituloDaRota(pathname) {
   return TITULOS[ultimo] || "Visão geral";
 }
 
-/* Cargo com acento e flexão correta (antes: "Psicologo (a)") */
 const CARGOS = {
   "aluno-paciente": "Aluno-paciente",
-  treinador: "Treinador(a)",
-  psicologo: "Psicólogo(a)",
+  treinador: "Treinadora",
+  psicologo: "Psicóloga",
   fisioterapeuta: "Fisioterapeuta",
 };
 
@@ -96,10 +93,6 @@ export default function Top() {
           <p className={styles.prof}>{profissaoFormatada}</p>
         </div>
 
-        {/*
-          Botão de sair. Se o seu fluxo de logout for outro, troque o onClick.
-          Para outra página de destino: signOut({ callbackUrl: "/login" }).
-        */}
         <button
           type="button"
           className={styles.sair}

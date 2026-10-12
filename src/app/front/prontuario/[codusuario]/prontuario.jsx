@@ -11,12 +11,6 @@ import {
   salvarObservacoes,
 } from "./utils";
 
-// Cor do chip de humor. Humores novos caem no estilo neutro padrão.
-const CLASSE_HUMOR = {
-  feliz: styles.humorFeliz,
-  ansioso: styles.humorAnsioso,
-  triste: styles.humorTriste,
-};
 
 function capitalizar(texto) {
   const t = String(texto || "");
@@ -26,7 +20,7 @@ function capitalizar(texto) {
 export default function Prontuario() {
   const { codusuario } = useParams();
   const [observacoes, setObservacoes] = useState("");
-  const [obsSalvas, setObsSalvas] = useState(""); // última versão salva (para "Cancelar")
+  const [obsSalvas, setObsSalvas] = useState(""); 
   const [editandoObs, setEditandoObs] = useState(false);
   const [salvandoObs, setSalvandoObs] = useState(false);
   const [erroObs, setErroObs] = useState("");
@@ -45,7 +39,7 @@ export default function Prontuario() {
     const carregarDiarios = async () => {
       const dadosDiarios = await pegarDiarios({ codusuario });
       if (dadosDiarios) {
-        setDiarios(dadosDiarios); // Salva no estado para usar no HTML
+        setDiarios(dadosDiarios); 
       }
     };
     carregarDiarios();
@@ -68,7 +62,6 @@ export default function Prontuario() {
   const nascimento = lerDataLocal(prontuario.dtnascimento);
   const idade = calcularIdade(prontuario.dtnascimento);
 
-  // Só mostra o que existe (antes aparecia um "-" solto quando faltava cidade/estado)
   const contatos = [
     prontuario.email,
     prontuario.telefone,
@@ -105,7 +98,6 @@ export default function Prontuario() {
     <div className={styles.container}>
       <header className={styles.cabecalho}>
         <div className={styles.basico}>
-          {/* Foto real, se existir, ou a inicial (antes: uma foto externa fixa) */}
           <div className={styles.foto} aria-hidden="true">
             {prontuario.fotoperfil ? (
               <img src={prontuario.fotoperfil} alt="" />
@@ -153,8 +145,6 @@ export default function Prontuario() {
               </p>
             ) : (
               diarios.map((diario) => {
-                const chaveHumor = String(diario.humor || "").toLowerCase();
-
                 return (
                   <article
                     key={diario.coddiario || diario.datadiario}
@@ -166,16 +156,6 @@ export default function Prontuario() {
                           "pt-BR",
                         )}
                       </span>
-
-                      {diario.humor && (
-                        <span
-                          className={`${styles.humor} ${
-                            CLASSE_HUMOR[chaveHumor] || ""
-                          }`}
-                        >
-                          {capitalizar(diario.humor)}
-                        </span>
-                      )}
                     </div>
 
                     <p className={styles.diarioTexto}>{diario.descricao}</p>

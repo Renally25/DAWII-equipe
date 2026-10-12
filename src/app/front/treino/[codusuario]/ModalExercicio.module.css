@@ -6,7 +6,7 @@
   justify-content: center;
   align-items: center;
   padding: 16px;
-  background: rgba(59, 66, 49, 0.55); /* oliva translúcido, em vez de preto */
+  background: rgba(59, 66, 49, 0.55); 
 }
 
 .modal {
@@ -48,7 +48,7 @@
 .campo label {
   font-size: 14px;
   font-weight: 600;
-  color: var(--texto); /* antes verde-musgo #656C47 em 600 */
+  color: var(--texto); 
 }
 
 .modal input,
@@ -94,7 +94,6 @@
   min-height: 84px;
 }
 
-/* Séries, repetições e descanso lado a lado (antes .duplo, com 3 colunas) */
 .trio {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

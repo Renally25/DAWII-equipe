@@ -1,11 +1,9 @@
-/* Grade de 3 indicadores iguais: mesma largura e altura */
 .container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
 }
 
-/* Cada card é um link para a tela do assunto, então o hover é funcional */
 .card {
   display: flex;
   flex-direction: column;
@@ -42,7 +40,6 @@
   }
 }
 
-/* A cor da barra superior identifica o assunto (não é o único sinal: há título) */
 .pacientes { --cor: var(--oliva); }
 .consultas { --cor: var(--acento); }
 .diarios   { --cor: var(--musgo); }
@@ -62,7 +59,6 @@
   color: var(--texto);
 }
 
-/* Zero é um estado válido, só fica mais discreto */
 .valorZero {
   color: var(--texto-suave);
 }

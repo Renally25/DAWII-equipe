@@ -11,7 +11,6 @@
   color: var(--texto);
 }
 
-/* ---------- Cartão do paciente ---------- */
 
 .cabecalho {
   display: flex;
@@ -79,7 +78,6 @@
   color: var(--texto-suave);
 }
 
-/* ---------- Histórico de diários ---------- */
 
 .secaoTitulo {
   margin: 0 0 4px;
@@ -89,7 +87,6 @@
   color: var(--texto);
 }
 
-/* Está sobre a areia, então usa o oliva (o cinza-suave não passa nesse fundo) */
 .subtitulo {
   margin: 0 0 20px;
   font-size: 14px;
@@ -139,7 +136,7 @@
 .diarioData {
   font-size: 13px;
   font-variant-numeric: tabular-nums;
-  color: var(--texto-suave); /* antes #9aa5b1, com contraste insuficiente */
+  color: var(--texto-suave); 
 }
 
 .diarioTexto {
@@ -147,32 +144,6 @@
   font-size: 15px;
   line-height: 1.6;
   color: var(--texto);
-}
-
-/* Humor: o texto sempre aparece; a cor só reforça (não é o único sinal) */
-.humor {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(59, 66, 49, 0.1);
-  color: var(--oliva);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.humorFeliz {
-  background: var(--musgo-claro);
-  color: var(--oliva);
-}
-
-.humorAnsioso {
-  background: #f3dfc8;
-  color: #7a3f0e;
-}
-
-.humorTriste {
-  background: #dce5e7;
-  color: #2f4a52;
 }
 
 .vazio {
@@ -185,8 +156,6 @@
   border: 1.5px dashed var(--borda-input);
   border-radius: 14px;
 }
-
-/* ---------- Observações ---------- */
 
 .observacoes {
   position: sticky;

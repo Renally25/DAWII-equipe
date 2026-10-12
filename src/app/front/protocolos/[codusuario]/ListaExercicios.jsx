@@ -49,7 +49,6 @@ export default function ListaExercicios({
       ) : exercicios.length === 0 ? (
         <div className={styles.vazio}>
           <h3>Nenhum exercício cadastrado</h3>
-          {/* Antes dizia "criar o treino deste dia", texto herdado da tela de treino */}
           <p>
             Clique em &quot;Adicionar exercício&quot; para montar este
             protocolo.

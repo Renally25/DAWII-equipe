@@ -38,7 +38,6 @@ export default function TelaProtocolo() {
     dataprotocolo: "",
   });
 
-  // Mensagens na tela no lugar dos alert()
   const [aviso, setAviso] = useState(null); // { tipo: "erro" | "sucesso", texto }
   const [erroProtocolo, setErroProtocolo] = useState("");
 

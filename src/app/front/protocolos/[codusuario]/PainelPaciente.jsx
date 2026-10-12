@@ -9,7 +9,7 @@ export default function PainelPaciente({ paciente }) {
   return (
     <section className={styles.card}>
       <div className={styles.topo}>
-        {/* Foto real, se existir, ou a inicial (antes: imagem externa fixa) */}
+        {/* Foto real, se existir, ou a inicial */}
         <div className={styles.avatar} aria-hidden="true">
           {paciente.fotoperfil ? (
             <img src={paciente.fotoperfil} alt="" />

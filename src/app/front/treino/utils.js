@@ -10,7 +10,6 @@ export function formatarData(valor) {
   return data ? data.toLocaleDateString("pt-BR") : "";
 }
 
-// CPF é dado sensível: mostramos só os 2 últimos dígitos
 export function mascararCpf(cpf) {
   const digitos = String(cpf || "").replace(/\D/g, "");
   if (digitos.length !== 11) return cpf || "—";

@@ -30,7 +30,7 @@
   margin: 6px 0 0;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--texto-suave); /* antes #777 */
+  color: var(--texto-suave); 
 }
 
 .acoes {
@@ -42,7 +42,7 @@
 .acoes button {
   display: grid;
   place-items: center;
-  width: 40px; /* antes 38px */
+  width: 40px; 
   height: 40px;
   padding: 0;
   border: none;
@@ -56,7 +56,6 @@
   outline-offset: 2px;
 }
 
-/* Editar: tom da paleta (antes um verde frio fora do sistema) */
 .editar {
   background: var(--musgo-claro);
   color: var(--oliva);
@@ -67,7 +66,6 @@
   color: var(--papel);
 }
 
-/* Excluir: tijolo da paleta no lugar do vermelho #D42F2F */
 .excluir {
   background: #f6e3df;
   color: var(--perigo);
@@ -97,7 +95,7 @@
 .label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--texto-suave); /* antes #888 */
+  color: var(--texto-suave);
 }
 
 .valor {

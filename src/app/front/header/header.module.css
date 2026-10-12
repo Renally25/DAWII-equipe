@@ -1,12 +1,9 @@
-/* Gradiente de marca mantido (oliva → musgo), agora só aqui e na sidebar */
 .header {
   background: linear-gradient(to right, var(--oliva), var(--musgo));
   color: var(--papel);
   padding: 20px 24px;
 }
 
-/* Mesma largura máxima e mesma margem lateral do .principalBloc da página:
-   o logo e o título alinham com as bordas dos cards (sem position: relative/left) */
 .conteudo {
   display: flex;
   align-items: center;

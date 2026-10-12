@@ -17,7 +17,6 @@ export default function PageProntuario() {
         <Top />
 
         <div className={styles.topoPagina}>
-          {/* Atalho para voltar à lista (antes só dava para voltar pelo menu ou navegador) */}
           <Link href="/front/pacientes" className={styles.voltar}>
             <svg
               viewBox="0 0 24 24"

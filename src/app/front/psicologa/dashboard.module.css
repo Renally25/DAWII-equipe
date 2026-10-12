@@ -39,7 +39,6 @@
   padding-right: 8px;
 }
 
-/* Estados de tela cheia (carregando / acesso negado) */
 .mensagemTela {
   min-height: 100vh;
   display: grid;
@@ -50,8 +49,6 @@
   font-size: 18px;
 }
 
-/* Dashboards com um único painel (ex.: treinador): coluna de largura confortável
-   em vez de esticar a lista de consultas pela tela inteira */
 .conteudoUnico {
   grid-template-columns: minmax(320px, 720px);
 }

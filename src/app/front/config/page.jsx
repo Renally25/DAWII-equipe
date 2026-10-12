@@ -250,7 +250,6 @@ export default function TelaConfig() {
       <div className={styles.container}>
         <Top />
 
-        {/* Tudo dentro de um <form>: Enter envia e o botão Salvar fica no rodapé fixo */}
         <form
           className={styles.main}
           onSubmit={(e) => {
@@ -378,7 +377,6 @@ export default function TelaConfig() {
             </button>
           </section>
 
-          {/* Barra fixa: Salvar fica sempre à vista e só habilita quando há mudanças */}
           <div className={styles.barraAcoes}>
             {mensagem && (
               <p

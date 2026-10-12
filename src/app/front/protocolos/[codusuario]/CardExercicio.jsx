@@ -4,8 +4,7 @@ import styles from "../../treino/[codusuario]/CardExercicio.module.css";
 import { Pencil, Trash2, Dumbbell } from "lucide-react";
 
 export default function CardExercicio({ exercicio, onEditar, onExcluir }) {
-  // Exercícios de protocolo normalmente não têm carga: antes isso aparecia como " kg".
-  // Agora o bloco só é exibido quando existe um peso maior que zero.
+
   const temCarga =
     exercicio.peso !== null &&
     exercicio.peso !== undefined &&

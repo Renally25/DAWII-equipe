@@ -47,7 +47,6 @@
   height: 16px;
 }
 
-/* Mesmo estilo de título das outras telas (antes: 28px/700 em azul-marinho) */
 .titulo {
   margin: 0;
   font-family: var(--fonte-titulo);

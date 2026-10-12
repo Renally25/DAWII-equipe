@@ -24,7 +24,7 @@
 .botaoAdicionar {
   display: grid;
   place-items: center;
-  width: 40px; /* antes 36px */
+  width: 40px; 
   height: 40px;
   padding: 0;
   color: var(--papel);
@@ -76,7 +76,6 @@
   outline-offset: 2px;
 }
 
-/* Item selecionado: fundo oliva + texto claro (o aria-pressed informa o estado) */
 .ativo,
 .ativo:hover {
   background: var(--oliva);

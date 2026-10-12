@@ -46,7 +46,7 @@
 .topo p {
   margin: 4px 0 0;
   font-size: 14px;
-  color: var(--texto-suave); /* antes #777 */
+  color: var(--texto-suave); 
 }
 
 .info {

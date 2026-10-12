@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./sidebar.module.css";
 
-/* ---------- Ícones (SVG inline, sem depender de biblioteca) ---------- */
 
 const ICONES = {
   home: (
@@ -97,17 +96,13 @@ function Icone({ nome }) {
   );
 }
 
-/* ---------- Componente ---------- */
-
 export default function Sidebar({ profile }) {
   const pathname = usePathname() || "";
   const avatarSrc = profile?.avatarSrc;
   const items = profile?.items || [];
 
   const trechosAtuais = pathname.split("/").filter(Boolean);
-  // Telas "filhas" de um paciente (prontuário e treino) acendem o item Pacientes.
-  // Se a sua rota de treino tiver outro nome, acrescente aqui.
-  const noProntuario = ["prontuario", "treino", "treinos"].some((t) =>
+    const noProntuario = ["prontuario", "treino", "treinos"].some((t) =>
     trechosAtuais.includes(t),
   );
 

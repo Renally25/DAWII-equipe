@@ -116,7 +116,7 @@ function Cards({ codtreinador }) {
 
           const dataConsulta = String(consulta.dataconsulta).split("T")[0];
 
-          return dataConsulta === dataHoje && consulta.status === "agendada"; //Verificar
+          return dataConsulta === dataHoje && consulta.status === "agendada"; 
         });
 
         setDados((anterior) => ({

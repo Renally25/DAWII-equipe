@@ -7,8 +7,6 @@ import styles from "./prinicipalBloc.module.css";
 import Busca from "../barraDeBusca/busca";
 import { Trash2, Edit, UserPlus } from "@deemlol/next-icons";
 
-/* ---------- Constantes e helpers ---------- */
-
 const ROTULOS_TIPO = {
   "aluno-paciente": "Aluno-paciente",
   treinador: "Treinador",
@@ -48,8 +46,6 @@ function mascaraTelefone(valor) {
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
 }
 
-/* ---------- Página ---------- */
-
 export default function Front() {
   const [inputBusca, setInputBusca] = useState("");
   const [busca, setBusca] = useState("");
@@ -58,7 +54,6 @@ export default function Front() {
     <div className={styles.container}>
       <Header />
 
-      {/* Antes havia dois .principalBloc aninhados; agora é um só */}
       <main className={styles.principalBloc}>
         <section className={styles.colunaFormulario}>
           <NovoUsuario />
@@ -98,7 +93,6 @@ export function NovoUsuario() {
   );
 }
 
-/* Label + campo: o htmlFor agora aponta para o id do input (acessibilidade) */
 function Campo({ id, label, span = "span12", children }) {
   return (
     <div className={`${styles.campo} ${styles[span]}`}>
@@ -167,8 +161,6 @@ export function Formulario() {
           body: JSON.stringify({
             nome: nome,
             email: email,
-            // CPF e CEP vão só com dígitos; o telefone vai formatado,
-            // como já aparece no prontuário. Ajuste se a API esperar outro formato.
             cpf: somenteDigitos(cpf),
             cep: somenteDigitos(cep),
             estado: estado,
@@ -178,8 +170,6 @@ export function Formulario() {
             numero: numero,
             telefone: telefone,
             tipousuario: tipo,
-            // OBS: o registro profissional (CREF/CRP/CREFITO) é coletado, mas
-            // continua sem ser enviado, como no código original.
           }),
         },
       );
@@ -464,13 +454,12 @@ export function Usuarios({ filtro, busca }) {
     (item) =>
       (item.nome || "").toLowerCase().includes(termo) ||
       (item.email || "").toLowerCase().includes(termo) ||
-      (item.tipousuario || "") // mudar depois no banco, pois esqueci de criar como not null
+      (item.tipousuario || "")
         .toLowerCase()
         .includes(termo),
   );
 
   async function deletarUsuario(item) {
-    // Confirmação antes de uma ação que não pode ser desfeita
     const confirmou = window.confirm(
       `Excluir ${item.nome}? Esta ação não pode ser desfeita.`,
     );
