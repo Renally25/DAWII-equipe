@@ -1,27 +1,82 @@
-.header{
-    background: linear-gradient(to right, #3b4231, #656c47);
-    color: #fafafa;
-    padding: 30px 30px 40px 0;
-    display: flex;
+/* Gradiente de marca mantido (oliva → musgo), agora só aqui e na sidebar */
+.header {
+  background: linear-gradient(to right, var(--oliva), var(--musgo));
+  color: var(--papel);
+  padding: 20px 24px;
 }
 
-.blocotexto{
-    position: relative;
-    left: 130px;
-    font-size: 30px;
-    font-weight: bold;
+/* Mesma largura máxima e mesma margem lateral do .principalBloc da página:
+   o logo e o título alinham com as bordas dos cards (sem position: relative/left) */
+.conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  max-width: 1120px;
+  margin: 0 auto;
 }
 
-.componentesHeader{
-    position: relative;
-    left: 100px;
-    align-items: center;
-    display: flex;
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
 }
 
-.img{
-    position: relative;
-    left: 100px;
-    height: 100px;
-    border-radius: 20px;
+.img {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.titulo {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--papel);
+}
+
+.sair {
+  padding: 8px 18px;
+  min-height: 40px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--papel);
+  background: transparent;
+  border: 1.5px solid rgba(243, 239, 230, 0.7);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sair:hover {
+  background: var(--papel);
+  color: var(--oliva);
+}
+
+.sair:focus-visible {
+  outline: 3px solid var(--areia);
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .header {
+    padding: 16px;
+  }
+
+  .titulo {
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sair {
+    transition: none;
+  }
 }

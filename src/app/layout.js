@@ -2,6 +2,7 @@
 import { Providers } from "./providers"; 
 import "./globals.css";
 import { Roboto } from "next/font/google";
+import "./tokens.css";
 
 export const metadata = {
   title: "Create Next App",

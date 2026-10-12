@@ -1,0 +1,56 @@
+/*
+ * tokens.css — design tokens do sistema Raggio
+ *
+ * Importe UMA vez, no layout raiz (app/layout.js) ou no globals.css:
+ *   import "./tokens.css";
+ *
+ * Paleta base (a sua):   --oliva #3B4231 · --musgo #656C47 · --areia #D5CDB8
+ * Todo o resto é derivado dela, para manter a harmonia análoga.
+ */
+
+:root {
+  /* Base */
+  --oliva: #3b4231;
+  --oliva-hover: #2b3124;
+  --musgo: #656c47;
+  --musgo-claro: #e1e4cf; /* tinta do musgo: avatares, blocos de data */
+  --areia: #d5cdb8;
+
+  /* Superfícies (brancos quentes, nunca branco puro nem azulado) */
+  --papel: #f3efe6; /* cards */
+  --papel-claro: #fbf9f4; /* inputs e itens dentro de cards */
+  --borda: #e0d8c6;
+  --borda-input: #7b8161; /* >= 3:1 sobre o papel (WCAG 1.4.11) */
+
+  /* Texto (contrastes estimados sobre --papel: texto 9:1, suave 5,6:1) */
+  --texto: #3b4231;
+  --texto-suave: #5a6150;
+  --placeholder: #6b7259;
+
+  /* Acento: usado com parcimônia (hoje, destaques) */
+  --acento: #b5651d; /* preenchimentos, barras */
+  --acento-texto: #8f4a12; /* texto e fundos com texto branco (>= 5,7:1) */
+
+  /* Semânticas */
+  --perigo: #9c3d32;
+  --perigo-hover: #7f2f26;
+  --aviso: #c28a2c;
+  --info: #4b6a72;
+
+  /* Forma e profundidade */
+  --raio-card: 18px;
+  --raio-item: 12px;
+  --sombra-card: 0 1px 2px rgba(59, 66, 49, 0.06),
+    0 8px 24px rgba(59, 66, 49, 0.08);
+  --foco: 0 0 0 3px rgba(101, 108, 71, 0.4);
+
+  /*
+   * Fonte dos títulos. Para carregar a Fraunces com next/font:
+   *   import { Fraunces } from "next/font/google";
+   *   const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
+   *   <body className={fraunces.variable}>
+   * Sem isso, cai para Georgia, que já funciona bem.
+   */
+  --fonte-titulo: var(--font-fraunces, "Fraunces"), Georgia, "Times New Roman",
+    serif;
+}

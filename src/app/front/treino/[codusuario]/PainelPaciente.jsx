@@ -1,56 +1,59 @@
 "use client";
 
 import styles from "./PainelPaciente.module.css";
+import { formatarData, mascararCpf } from "../utils";
 
 export default function PainelPaciente({ paciente }) {
   if (!paciente) return null;
 
   return (
-    <div className={styles.card}>
+    <section className={styles.card}>
       <div className={styles.topo}>
-        <img
-          className={styles.avatar}
-          src="https://img.magnific.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4841.jpg?semt=ais_hybrid&w=740&q=80"
-          alt={paciente.nome}
-        />
+        {/* Foto real, se existir, ou a inicial (antes: imagem externa fixa) */}
+        <div className={styles.avatar} aria-hidden="true">
+          {paciente.fotoperfil ? (
+            <img src={paciente.fotoperfil} alt="" />
+          ) : (
+            (paciente.nome || "?").charAt(0).toUpperCase()
+          )}
+        </div>
 
         <div>
           <h2>{paciente.nome}</h2>
-          <p>Aluno-Paciente</p>
+          <p>Aluno-paciente</p>
         </div>
       </div>
 
-      <div className={styles.info}>
+      <dl className={styles.info}>
         <div className={styles.item}>
-          <span className={styles.label}>Código</span>
-          <span>{paciente.codusuario}</span>
+          <dt className={styles.label}>Código</dt>
+          <dd className={styles.valor}>{paciente.codusuario}</dd>
         </div>
 
         <div className={styles.item}>
-          <span className={styles.label}>CPF</span>
-          <span>{paciente.cpf}</span>
+          <dt className={styles.label}>CPF</dt>
+          <dd className={styles.valor}>{mascararCpf(paciente.cpf)}</dd>
         </div>
 
         <div className={styles.item}>
-          <span className={styles.label}>Nascimento</span>
-
-          <span>
-            {paciente.dtnascimento
-              ? new Date(paciente.dtnascimento).toLocaleDateString("pt-BR")
-              : "-"}
-          </span>
+          <dt className={styles.label}>Nascimento</dt>
+          <dd className={styles.valor}>
+            {formatarData(paciente.dtnascimento) || "—"}
+          </dd>
         </div>
 
         <div className={styles.item}>
-          <span className={styles.label}>Telefone</span>
-          <span>{paciente.telefone || "-"}</span>
+          <dt className={styles.label}>Telefone</dt>
+          <dd className={styles.valor}>{paciente.telefone || "—"}</dd>
         </div>
 
         <div className={styles.item}>
-          <span className={styles.label}>Objetivo</span>
-          <span>{paciente.objetivo || "Não informado"}</span>
+          <dt className={styles.label}>Objetivo</dt>
+          <dd className={styles.valor}>
+            {paciente.objetivo || "Não informado"}
+          </dd>
         </div>
-      </div>
-    </div>
+      </dl>
+    </section>
   );
 }

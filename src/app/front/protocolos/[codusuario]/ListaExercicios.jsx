@@ -2,6 +2,7 @@
 
 import styles from "../../treino/[codusuario]/ListaExercicios.module.css";
 import CardExercicio from "./CardExercicio";
+import { Plus } from "lucide-react";
 
 export default function ListaExercicios({
   protocolo,
@@ -11,50 +12,47 @@ export default function ListaExercicios({
   onAdicionar,
   temProtocolo,
 }) {
-
-  const exercicios =
-    protocolo?.[dia]?.exercicios ??
-    protocolo?.[dia] ??
-    [];
+  const exercicios = protocolo?.[dia]?.exercicios ?? protocolo?.[dia] ?? [];
 
   return (
     <div className={styles.container}>
-
       <div className={styles.header}>
-
         <div>
           <h2>{dia || "Protocolo"}</h2>
 
           <p>
-            {exercicios.length} exercício
-            {exercicios.length !== 1 && "s"}
+            {exercicios.length}{" "}
+            {exercicios.length === 1 ? "exercício" : "exercícios"}
           </p>
-
         </div>
 
         <button
+          type="button"
           className={styles.botaoAdicionar}
           onClick={onAdicionar}
           disabled={!temProtocolo}
           title={!temProtocolo ? "Crie um protocolo primeiro" : ""}
         >
-          + Adicionar exercício
+          <Plus size={18} aria-hidden="true" />
+          Adicionar exercício
         </button>
-
       </div>
 
       {!temProtocolo ? (
         <div className={styles.vazio}>
           <h3>Nenhum protocolo selecionado</h3>
           <p>
-            Crie um protocolo no painel esquerdo para começar a adicionar exercícios.
+            Crie um protocolo no painel ao lado para começar a adicionar
+            exercícios.
           </p>
         </div>
       ) : exercicios.length === 0 ? (
         <div className={styles.vazio}>
-          <h3>Nenhum exercício cadastrado.</h3>
+          <h3>Nenhum exercício cadastrado</h3>
+          {/* Antes dizia "criar o treino deste dia", texto herdado da tela de treino */}
           <p>
-            Clique em "Adicionar exercício" para criar o treino deste dia.
+            Clique em &quot;Adicionar exercício&quot; para montar este
+            protocolo.
           </p>
         </div>
       ) : (
@@ -69,7 +67,6 @@ export default function ListaExercicios({
           ))}
         </div>
       )}
-
     </div>
   );
 }

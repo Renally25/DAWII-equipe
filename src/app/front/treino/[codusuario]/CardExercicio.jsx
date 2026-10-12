@@ -3,82 +3,60 @@
 import styles from "./CardExercicio.module.css";
 import { Pencil, Trash2, Dumbbell } from "lucide-react";
 
-export default function CardExercicio({
-  exercicio,
-  onEditar,
-  onExcluir,
-}) {
+export default function CardExercicio({ exercicio, onEditar, onExcluir }) {
+  // peso null/0 aparecia como " kg"; agora mostra "Sem carga"
+  const temCarga = exercicio.peso !== null && exercicio.peso !== undefined && Number(exercicio.peso) > 0;
+
   return (
-    <div className={styles.card}>
-
+    <article className={styles.card}>
       <div className={styles.topo}>
-
         <div>
-
           <h3>{exercicio.nome}</h3>
 
-          {exercicio.descricao && (
-            <p>{exercicio.descricao}</p>
-          )}
-
+          {exercicio.descricao && <p>{exercicio.descricao}</p>}
         </div>
 
         <div className={styles.acoes}>
-
           <button
+            type="button"
             className={styles.editar}
             onClick={() => onEditar(exercicio)}
+            aria-label={`Editar ${exercicio.nome}`}
+            title="Editar"
           >
-            <Pencil size={18}/>
+            <Pencil size={18} />
           </button>
 
           <button
+            type="button"
             className={styles.excluir}
             onClick={() => onExcluir(exercicio.codexercicio)}
+            aria-label={`Excluir ${exercicio.nome}`}
+            title="Excluir"
           >
-            <Trash2 size={18}/>
+            <Trash2 size={18} />
           </button>
-
         </div>
-
       </div>
 
-      <div className={styles.informacoes}>
-
-        <div className={styles.info}>
-
-          <Dumbbell size={18}/>
-
-          <div>
-
-            <span className={styles.valor}>
-              {exercicio.series} x {exercicio.repeticoes}
-            </span>
-
-            <span className={styles.label}>
-              Séries
-            </span>
-
-          </div>
-
+      <dl className={styles.informacoes}>
+        <div className={styles.stat}>
+          <dt className={styles.label}>Séries</dt>
+          <dd className={styles.valor}>
+            <Dumbbell size={16} aria-hidden="true" />
+            {exercicio.series} x {exercicio.repeticoes}
+          </dd>
         </div>
 
-        <div className={styles.info}>
-
-          <div className={styles.kg}>
-            {exercicio.peso} kg
-          </div>
-
-          <span className={styles.label}>
-            Carga
-          </span>
-
+        <div className={styles.stat}>
+          <dt className={styles.label}>Carga</dt>
+          <dd className={`${styles.valor} ${temCarga ? styles.kg : styles.semCarga}`}>
+            {temCarga ? `${exercicio.peso} kg` : "Sem carga"}
+          </dd>
         </div>
 
-        {/* 🔥 REMOVIDO O BLOCO DO DESCANSO */}
-
-      </div>
-
-    </div>
+        {/* O bloco de descanso continua removido, como no seu código original */}
+      </dl>
+    </article>
   );
 }

@@ -2,6 +2,7 @@
 
 import styles from "./ListaExercicios.module.css";
 import CardExercicio from "./CardExercicio";
+import { Plus } from "lucide-react";
 
 export default function ListaExercicios({
   treino,
@@ -11,50 +12,46 @@ export default function ListaExercicios({
   onAdicionar,
   temTreino,
 }) {
-
-  const exercicios =
-    treino?.[dia]?.exercicios ??
-    treino?.[dia] ??
-    [];
+  const exercicios = treino?.[dia]?.exercicios ?? treino?.[dia] ?? [];
 
   return (
     <div className={styles.container}>
-
       <div className={styles.header}>
-
         <div>
           <h2>{dia || "Treino"}</h2>
 
           <p>
-            {exercicios.length} exercício
-            {exercicios.length !== 1 && "s"}
+            {exercicios.length}{" "}
+            {exercicios.length === 1 ? "exercício" : "exercícios"}
           </p>
-
         </div>
 
         <button
+          type="button"
           className={styles.botaoAdicionar}
           onClick={onAdicionar}
           disabled={!temTreino}
           title={!temTreino ? "Crie um treino primeiro" : ""}
         >
-          + Adicionar exercício
+          <Plus size={18} aria-hidden="true" />
+          Adicionar exercício
         </button>
-
       </div>
 
       {!temTreino ? (
         <div className={styles.vazio}>
           <h3>Nenhum treino selecionado</h3>
           <p>
-            Crie um treino no painel esquerdo para começar a adicionar exercícios.
+            Crie um treino no painel ao lado para começar a adicionar
+            exercícios.
           </p>
         </div>
       ) : exercicios.length === 0 ? (
         <div className={styles.vazio}>
-          <h3>Nenhum exercício cadastrado.</h3>
+          <h3>Nenhum exercício cadastrado</h3>
           <p>
-            Clique em "Adicionar exercício" para criar o treino deste dia.
+            Clique em &quot;Adicionar exercício&quot; para montar o treino
+            deste dia.
           </p>
         </div>
       ) : (
@@ -69,7 +66,6 @@ export default function ListaExercicios({
           ))}
         </div>
       )}
-
     </div>
   );
 }

@@ -32,6 +32,10 @@ export default function TelaTreino() {
     duracao: "",
   });
 
+  // Mensagens na tela no lugar dos alert()
+  const [aviso, setAviso] = useState(null); // { tipo: "erro" | "sucesso", texto }
+  const [erroTreino, setErroTreino] = useState("");
+
   useEffect(() => {
     if (codusuario) {
       carregarPaciente();
@@ -104,33 +108,48 @@ export default function TelaTreino() {
     }
   }
 
+  function fecharNovoTreino() {
+    setMostrarNovoTreino(false);
+    setErroTreino("");
+    setNovoTreino({
+      descricao: "",
+      datatreino: "",
+      duracao: "",
+    });
+  }
+
   async function criarNovoTreino() {
+    setErroTreino("");
+
     if (!novoTreino.descricao.trim()) {
-      alert("Por favor, informe a descrição do treino");
+      setErroTreino("Por favor, informe a descrição do treino.");
       return;
     }
     if (!novoTreino.datatreino) {
-      alert("Por favor, informe a data do treino");
+      setErroTreino("Por favor, informe a data do treino.");
       return;
     }
     if (!novoTreino.duracao || parseFloat(novoTreino.duracao) <= 0) {
-      alert("Por favor, informe a duração do treino");
+      setErroTreino("Por favor, informe a duração do treino.");
       return;
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Treino`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Treino`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            descricao: novoTreino.descricao.trim(),
+            datatreino: novoTreino.datatreino,
+            duracao: parseFloat(novoTreino.duracao),
+            codusuario: parseInt(codusuario),
+          }),
         },
-        body: JSON.stringify({
-          descricao: novoTreino.descricao.trim(),
-          datatreino: novoTreino.datatreino,
-          duracao: parseFloat(novoTreino.duracao),
-          codusuario: parseInt(codusuario),
-        }),
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -139,38 +158,39 @@ export default function TelaTreino() {
 
       await carregarTreinos();
 
-      setMostrarNovoTreino(false);
-      setNovoTreino({
-        descricao: "",
-        datatreino: "",
-        duracao: "",
-      });
-
-      alert("Treino criado com sucesso!");
+      fecharNovoTreino();
+      setAviso({ tipo: "sucesso", texto: "Treino criado com sucesso." });
     } catch (err) {
       console.log("Erro ao criar treino:", err);
-      alert(err.message || "Erro ao criar treino");
+      setErroTreino(err.message || "Erro ao criar treino.");
     }
   }
 
   function abrirNovoExercicio() {
     if (!treinoSelecionado) {
-      alert("Crie um treino primeiro antes de adicionar exercícios");
+      setAviso({
+        tipo: "erro",
+        texto: "Crie um treino primeiro antes de adicionar exercícios.",
+      });
       return;
     }
+    setAviso(null);
     setModoModal("novo");
     setExercicioSelecionado(null);
     setModalAberto(true);
   }
 
   function editarExercicio(exercicio) {
+    setAviso(null);
     setModoModal("editar");
     setExercicioSelecionado(exercicio);
     setModalAberto(true);
   }
 
   async function excluirExercicio(codexercicio) {
-    const confirmar = confirm("Tem certeza que deseja excluir este exercício?");
+    const confirmar = window.confirm(
+      "Tem certeza que deseja excluir este exercício?",
+    );
 
     if (!confirmar) return;
 
@@ -188,10 +208,10 @@ export default function TelaTreino() {
         await selecionarTreino(treinoSelecionado);
       }
 
-      alert("Exercício excluído com sucesso!");
+      setAviso({ tipo: "sucesso", texto: "Exercício excluído com sucesso." });
     } catch (err) {
       console.log("Erro ao excluir exercício:", err);
-      alert("Erro ao excluir exercício");
+      setAviso({ tipo: "erro", texto: "Não foi possível excluir o exercício." });
     }
   }
 
@@ -202,7 +222,9 @@ export default function TelaTreino() {
         <div className={styles.main}>
           <Top />
           <div className={styles.container}>
-            <div className={styles.loading}>Carregando...</div>
+            <div className={styles.loading} role="status">
+              Carregando...
+            </div>
           </div>
         </div>
       </div>
@@ -216,6 +238,17 @@ export default function TelaTreino() {
       <div className={styles.main}>
         <Top />
 
+        {aviso && (
+          <p
+            role={aviso.tipo === "erro" ? "alert" : "status"}
+            className={`${styles.aviso} ${
+              aviso.tipo === "erro" ? styles.avisoErro : styles.avisoSucesso
+            }`}
+          >
+            {aviso.texto}
+          </p>
+        )}
+
         <div className={styles.container}>
           <div className={styles.left}>
             <PainelPaciente paciente={paciente} />
@@ -226,51 +259,87 @@ export default function TelaTreino() {
               onCriarTreino={() => setMostrarNovoTreino(true)}
             />
             {mostrarNovoTreino && (
-              <div className={styles.novoTreinoCard}>
-                <h4>Novo Treino</h4>
-                <input
-                  type="text"
-                  placeholder="Descrição (ex: Treino A - Superiores)"
-                  value={novoTreino.descricao}
-                  onChange={(e) =>
-                    setNovoTreino({ ...novoTreino, descricao: e.target.value })
-                  }
-                />
-                <input
-                  type="date"
-                  value={novoTreino.datatreino}
-                  onChange={(e) =>
-                    setNovoTreino({ ...novoTreino, datatreino: e.target.value })
-                  }
-                />
-                <input
-                  type="number"
-                  step="0.5"
-                  placeholder="Duração (horas)"
-                  value={novoTreino.duracao}
-                  onChange={(e) =>
-                    setNovoTreino({ ...novoTreino, duracao: e.target.value })
-                  }
-                />
+              <form
+                className={styles.novoTreinoCard}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  criarNovoTreino();
+                }}
+              >
+                <h4>Novo treino</h4>
+
+                <div className={styles.campo}>
+                  <label htmlFor="treino-descricao" className={styles.label}>
+                    Descrição
+                  </label>
+                  <input
+                    id="treino-descricao"
+                    type="text"
+                    placeholder="Ex.: Treino A - Superiores"
+                    autoFocus
+                    value={novoTreino.descricao}
+                    onChange={(e) =>
+                      setNovoTreino({
+                        ...novoTreino,
+                        descricao: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className={styles.campo}>
+                  <label htmlFor="treino-data" className={styles.label}>
+                    Data
+                  </label>
+                  <input
+                    id="treino-data"
+                    type="date"
+                    value={novoTreino.datatreino}
+                    onChange={(e) =>
+                      setNovoTreino({
+                        ...novoTreino,
+                        datatreino: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className={styles.campo}>
+                  <label htmlFor="treino-duracao" className={styles.label}>
+                    Duração (horas)
+                  </label>
+                  <input
+                    id="treino-duracao"
+                    type="number"
+                    step="0.5"
+                    min="0"
+                    placeholder="1,5"
+                    value={novoTreino.duracao}
+                    onChange={(e) =>
+                      setNovoTreino({ ...novoTreino, duracao: e.target.value })
+                    }
+                  />
+                </div>
+
+                {erroTreino && (
+                  <p role="alert" className={styles.erroCampo}>
+                    {erroTreino}
+                  </p>
+                )}
+
                 <div className={styles.botoesTreino}>
                   <button
+                    type="button"
                     className={styles.cancelar}
-                    onClick={() => {
-                      setMostrarNovoTreino(false);
-                      setNovoTreino({
-                        descricao: "",
-                        datatreino: "",
-                        duracao: "",
-                      });
-                    }}
+                    onClick={fecharNovoTreino}
                   >
                     Cancelar
                   </button>
-                  <button className={styles.salvar} onClick={criarNovoTreino}>
-                    Criar Treino
+                  <button type="submit" className={styles.salvar}>
+                    Criar treino
                   </button>
                 </div>
-              </div>
+              </form>
             )}
           </div>
 

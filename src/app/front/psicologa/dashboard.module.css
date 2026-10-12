@@ -1,36 +1,57 @@
 .dashboard {
-    display: flex;
-    height: 100vh;           
-    background: #D5CDB8;
-    width: 100vw;           
-    overflow: hidden;        
-    box-sizing: border-box;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--areia);
+  color: var(--texto);
 }
 
 .wrapperPrincipal {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    height: 100%;          
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
 }
 
 .containerPrincipal {
-    flex: 1;                
-    padding: 30px;
-    display: flex;          
-    flex-direction: column;
-    overflow: hidden;       
-    box-sizing: border-box;
+  flex: 1;
+  min-height: 0; /* permite que o filho com overflow role dentro do flex */
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 32px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
+/* Os dois painéis têm a mesma altura (stretch) e rolam juntos */
 .conteudo {
-    flex: 1;                 
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-    gap: 24px;
-    margin-top: 24px;
-    align-items: start;
-    overflow-y: auto;        
-    padding-right: 8px;    
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  align-items: stretch;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Estados de tela cheia (carregando / acesso negado) */
+.mensagemTela {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  background: var(--areia);
+  color: var(--texto);
+  font-size: 18px;
+}
+
+/* Dashboards com um único painel (ex.: treinador): coluna de largura confortável
+   em vez de esticar a lista de consultas pela tela inteira */
+.conteudoUnico {
+  grid-template-columns: minmax(320px, 720px);
 }

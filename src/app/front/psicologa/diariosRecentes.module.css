@@ -1,100 +1,149 @@
 .container {
-    background: rgba(255, 255, 255, 0.55);
-    border-radius: 18px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  background: var(--papel);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-card);
+  box-shadow: var(--sombra-card);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .header h2 {
-    margin: 0;
-    color: #2f3b52;
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--texto);
 }
 
 .botaoLink {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 18px;
-    background: #3b4231;
-    color: #ffffff;
-    border-radius: 999px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  background: var(--oliva);
+  color: var(--papel);
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s ease;
 }
 
 .botaoLink:hover {
-    background: #2b3124;
+  background: var(--oliva-hover);
+}
+
+.botaoLink:focus-visible {
+  outline: 3px solid var(--musgo);
+  outline-offset: 3px;
 }
 
 .card {
-    display: flex;
-    gap: 14px;
-    padding: 16px;
-    margin-bottom: 14px;
-    border: 1px solid #e6d9c5;
-    border-radius: 14px;
-    background: #fff;
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: var(--papel-claro);
+  border: 1px solid var(--borda);
+  border-radius: 14px;
 }
 
+.card:last-of-type {
+  margin-bottom: 0;
+}
+
+/* Avatar com a paleta do sistema (antes era azul) */
 .avatar {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: #6da4d9;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--musgo);
+  color: #fff;
+  font-weight: 700;
 }
 
 .conteudo {
-    flex: 1;
+  flex: 1;
+  min-width: 0;
 }
 
 .topo {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 4px;
 }
 
 .nome {
-    font-weight: 600;
-    color: #2f3b52;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+/* Substitui o <small style="..."> que estava inline no JSX */
+.codigo {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--texto-suave);
 }
 
 .data {
-    font-size: 12px;
-    color: #9aa5b1;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--texto-suave);
 }
 
 .texto {
-    margin: 0;
-    color: #6c7a89;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--texto-suave);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .linkVerMais {
-    display: inline-block;
-    margin-top: 8px;
-    text-decoration: none;
-    color: #4a7bd0;
-    font-size: 13px;
-    font-weight: 500;
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--musgo); /* antes: azul #4a7bd0 */
+  text-decoration: none;
 }
 
 .linkVerMais:hover {
-    text-decoration: underline;
+  text-decoration: underline;
+}
+
+.linkVerMais:focus-visible {
+  outline: 3px solid var(--musgo);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.vazio {
+  margin: 0;
+  padding: 28px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--texto-suave);
+  border: 1.5px dashed var(--borda-input);
+  border-radius: 14px;
 }

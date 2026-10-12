@@ -1,55 +1,142 @@
-.logo{
-    padding: 20px 0;
-    border-bottom: 1px solid #fafafa;
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
+.sidebar {
+  position: sticky; /* acompanha a rolagem em páginas longas */
+  top: 0;
+  align-self: flex-start;
+  width: 250px;
+  flex-shrink: 0;
+  height: 100vh;
+  box-sizing: border-box;
+  padding: 20px 16px;
+  background-color: var(--oliva);
+  color: var(--papel);
+  overflow-y: auto;
 }
 
-.logoText{
-    color: #fafafa;
-    font-size: 14px;
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 4px 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(213, 205, 184, 0.25);
 }
 
 .image {
-    width: 50px;
-    height: 50px;
-    border-radius: 50px;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  object-fit: cover;
 }
 
-.sidebar {
-    width: 250px;
-    flex-shrink: 0;
-    height: 100vh;
-    background-color: #3b4231;
-    padding: 20px;
-    box-sizing: border-box;
+.logoText {
+  min-width: 0;
 }
 
-.sidebar nav {
-    display: flex;
-    flex-direction: column;  
-    gap: 15px;            
+.marca {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--papel);
+}
+
+.submarca {
+  margin: 2px 0 0;
+  font-size: 13px; /* antes 14px com h6, que ficava ilegível */
+  color: var(--areia);
+}
+
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .menuItem {
-    margin-top: 10px;
-    background: none;
-    border: none;
-    color: #fafafa;
-    font-size: 18px;
-    text-align: left;        
-    padding: 12px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    width: 100%;            
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: var(--papel);
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
 }
 
 .menuItem:hover {
-    background-color: #656c474d;
+  background-color: rgba(101, 108, 71, 0.55);
 }
 
-.config{
-    justify-content: flex-end;
+.menuItem:focus-visible {
+  outline: 3px solid var(--areia);
+  outline-offset: 2px;
+}
+
+.ativo {
+  background-color: rgba(213, 205, 184, 0.16);
+  font-weight: 700;
+}
+
+.ativo::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background-color: var(--areia);
+}
+
+.icone {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 76px;
+    padding: 16px 10px;
+  }
+
+  .logo {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  .logoText {
+    display: none;
+  }
+
+  .menuItem {
+    justify-content: center;
+    padding: 12px 0;
+  }
+
+  .label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menuItem {
+    transition: none;
+  }
 }

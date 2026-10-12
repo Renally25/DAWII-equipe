@@ -12,10 +12,27 @@ import Sidebar from "../sidebar/sidebar";
 import { profiles } from "../sidebar/profiles";
 import Top from "../top/top";
 
+function lerData(valor) {
+  if (!valor) return null;
+  const [ano, mes, dia] = String(valor).split("T")[0].split("-").map(Number);
+  if (!ano || !mes || !dia) return null;
+  return new Date(ano, mes - 1, dia);
+}
 
-/* =========================================================
-   CARDS
-   ========================================================= */
+function ehHoje(data) {
+  const agora = new Date();
+  return (
+    data.getFullYear() === agora.getFullYear() &&
+    data.getMonth() === agora.getMonth() &&
+    data.getDate() === agora.getDate()
+  );
+}
+
+function mesAbreviado(data) {
+  return data
+    .toLocaleDateString("pt-BR", { month: "short" })
+    .replace(".", "");
+}
 
 function Cards({ codtreinador }) {
   const [dados, setDados] = useState({
@@ -30,12 +47,8 @@ function Cards({ codtreinador }) {
 
     const buscarDados = async () => {
       try {
-        /* =====================================================
-           1. BUSCAR TODOS OS ALUNOS
-           ===================================================== */
-
         const responseAlunos = await fetch(
-          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Aluno_Paciente`
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Aluno_Paciente`,
         );
 
         if (!responseAlunos.ok) {
@@ -46,186 +59,128 @@ function Cards({ codtreinador }) {
 
         const alunos = dataAlunos.pacientes || [];
 
-        /* =====================================================
-           2. ATUALIZAR TOTAL DE ALUNOS
-           ===================================================== */
-
         setDados((anterior) => ({
           ...anterior,
           totalPacientes: alunos.length,
         }));
 
-        /* =====================================================
-           3. BUSCAR AS CONSULTAS DE CADA ALUNO
-           ===================================================== */
-
         const consultasPorAluno = await Promise.all(
           alunos.map(async (aluno) => {
             try {
               const responseConsulta = await fetch(
-                `${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta?codusuario=${aluno.codusuario}`
+                `${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta?codusuario=${aluno.codusuario}`,
               );
 
               if (!responseConsulta.ok) {
                 return [];
               }
 
-              const dataConsulta =
-                await responseConsulta.json();
-
-              /*
-               * Sua rota atual retorna um ARRAY:
-               *
-               * [
-               *   {
-               *     codconsulta: 1,
-               *     codusuario: 10,
-               *     codtreinador: 101
-               *   }
-               * ]
-               */
+              const dataConsulta = await responseConsulta.json();
 
               if (Array.isArray(dataConsulta)) {
                 return dataConsulta;
               }
 
-              /*
-               * Mantém compatibilidade caso a API
-               * eventualmente retorne { consultas: [...] }
-               */
-
               return dataConsulta.consultas || [];
             } catch (error) {
               console.error(
                 `Erro ao buscar consultas do aluno ${aluno.codusuario}:`,
-                error
+                error,
               );
 
               return [];
             }
-          })
+          }),
         );
 
-        /* =====================================================
-           4. JUNTAR TODAS AS CONSULTAS
-           ===================================================== */
+        const todasConsultas = consultasPorAluno.flat();
 
-        const todasConsultas =
-          consultasPorAluno.flat();
-
-        /* =====================================================
-           5. FILTRAR SOMENTE AS CONSULTAS DO TREINADOR LOGADO
-           ===================================================== */
-
-        const consultasTreinador =
-          todasConsultas.filter(
-            (consulta) =>
-              Number(consulta.codtreinador) ===
-              Number(codtreinador)
-          );
-
-        /* =====================================================
-           6. PEGAR A DATA DE HOJE
-           ===================================================== */
+        const consultasTreinador = todasConsultas.filter(
+          (consulta) => Number(consulta.codtreinador) === Number(codtreinador),
+        );
 
         const hoje = new Date();
 
         const ano = hoje.getFullYear();
 
-        const mes = String(
-          hoje.getMonth() + 1
-        ).padStart(2, "0");
+        const mes = String(hoje.getMonth() + 1).padStart(2, "0");
 
-        const dia = String(
-          hoje.getDate()
-        ).padStart(2, "0");
+        const dia = String(hoje.getDate()).padStart(2, "0");
 
-        const dataHoje =
-          `${ano}-${mes}-${dia}`;
+        const dataHoje = `${ano}-${mes}-${dia}`;
 
-        /* =====================================================
-           7. FILTRAR CONSULTAS DO TREINADOR PARA HOJE
-           ===================================================== */
+        const consultasHoje = consultasTreinador.filter((consulta) => {
+          if (!consulta.dataconsulta) {
+            return false;
+          }
 
-        const consultasHoje =
-          consultasTreinador.filter(
-            (consulta) => {
-              if (!consulta.dataconsulta) {
-                return false;
-              }
+          const dataConsulta = String(consulta.dataconsulta).split("T")[0];
 
-              const dataConsulta =
-                String(
-                  consulta.dataconsulta
-                ).split("T")[0];
-
-              return (
-                dataConsulta === dataHoje &&
-                consulta.status === "agendada"
-              );
-            }
-          );
-
-        /* =====================================================
-           8. ATUALIZAR CARD
-           ===================================================== */
+          return dataConsulta === dataHoje && consulta.status === "agendada"; //Verificar
+        });
 
         setDados((anterior) => ({
           ...anterior,
-          consultasHoje:
-            consultasHoje.length,
+          consultasHoje: consultasHoje.length,
         }));
       } catch (error) {
-        console.error(
-          "Erro ao buscar dashboard:",
-          error
-        );
+        console.error("Erro ao buscar dashboard:", error);
       }
     };
 
     buscarDados();
   }, [codtreinador]);
 
+  const itens = [
+    {
+      href: "./pacientesTreinador",
+      classe: cardsStyles.pacientes,
+      titulo: "Total de alunos",
+      valor: dados.totalPacientes,
+      descricao:
+        dados.totalPacientes === 0
+          ? "Nenhum aluno cadastrado"
+          : dados.totalPacientes === 1
+            ? "Aluno cadastrado"
+            : "Alunos cadastrados",
+    },
+    {
+      href: "./calendario",
+      classe: cardsStyles.consultas,
+      titulo: "Consultas hoje",
+      valor: dados.consultasHoje,
+      descricao:
+        dados.consultasHoje === 0
+          ? "Nenhuma consulta agendada para hoje"
+          : "Agendadas para hoje",
+    },
+  ];
+
   return (
     <div className={cardsStyles.container}>
+      {itens.map((item) => (
+        <Link
+          key={item.titulo}
+          href={item.href}
+          className={`${cardsStyles.card} ${item.classe}`}
+        >
+          <span className={cardsStyles.titulo}>{item.titulo}</span>
 
-      <div className={cardsStyles.card}>
-        <span className={cardsStyles.titulo}>
-          Total de Alunos
-        </span>
+          <span
+            className={`${cardsStyles.valor} ${
+              item.valor === 0 ? cardsStyles.valorZero : ""
+            }`}
+          >
+            {item.valor}
+          </span>
 
-        <span className={cardsStyles.valor}>
-          {dados.totalPacientes}
-        </span>
-
-        <span className={cardsStyles.descricao}>
-          Alunos cadastrados
-        </span>
-      </div>
-
-
-      <div className={cardsStyles.card}>
-        <span className={cardsStyles.titulo}>
-          Consultas Hoje
-        </span>
-
-        <span className={cardsStyles.valor}>
-          {dados.consultasHoje}
-        </span>
-
-        <span className={cardsStyles.descricao}>
-          Agendadas para hoje
-        </span>
-      </div>
-
+          <span className={cardsStyles.descricao}>{item.descricao}</span>
+        </Link>
+      ))}
     </div>
   );
 }
 
-
-/* =========================================================
-   PRÓXIMAS CONSULTAS
-   ========================================================= */
 
 function Alertas({ codtreinador }) {
   const [data, setData] = useState({
@@ -239,389 +194,187 @@ function Alertas({ codtreinador }) {
 
     const pegarConsultas = async () => {
       try {
-
-        /* ===================================================
-           1. BUSCAR TODOS OS ALUNOS
-           =================================================== */
-
         const responseAlunos = await fetch(
-          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Aluno_Paciente`
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Aluno_Paciente`,
         );
 
         if (!responseAlunos.ok) {
-          throw new Error(
-            "Erro ao buscar alunos."
-          );
+          throw new Error("Erro ao buscar alunos.");
         }
 
-        const dataAlunos =
-          await responseAlunos.json();
+        const dataAlunos = await responseAlunos.json();
 
-        const alunos =
-          dataAlunos.pacientes || [];
+        const alunos = dataAlunos.pacientes || [];
 
+        const consultasPorAluno = await Promise.all(
+          alunos.map(async (aluno) => {
+            try {
+              const responseConsulta = await fetch(
+                `${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta?codusuario=${aluno.codusuario}`,
+              );
 
-        /* ===================================================
-           2. BUSCAR CONSULTAS DE CADA ALUNO
-           =================================================== */
-
-        const consultasPorAluno =
-          await Promise.all(
-            alunos.map(async (aluno) => {
-              try {
-
-                const responseConsulta =
-                  await fetch(
-                    `${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta?codusuario=${aluno.codusuario}`
-                  );
-
-                if (!responseConsulta.ok) {
-                  return [];
-                }
-
-                const dataConsulta =
-                  await responseConsulta.json();
-
-                if (
-                  Array.isArray(
-                    dataConsulta
-                  )
-                ) {
-                  return dataConsulta;
-                }
-
-                return (
-                  dataConsulta.consultas ||
-                  []
-                );
-
-              } catch (error) {
-
-                console.error(
-                  `Erro ao buscar consultas do aluno ${aluno.codusuario}:`,
-                  error
-                );
-
+              if (!responseConsulta.ok) {
                 return [];
               }
-            })
-          );
 
+              const dataConsulta = await responseConsulta.json();
 
-        /* ===================================================
-           3. JUNTAR TODAS AS CONSULTAS
-           =================================================== */
+              if (Array.isArray(dataConsulta)) {
+                return dataConsulta;
+              }
 
-        const todasConsultas =
-          consultasPorAluno.flat();
+              return dataConsulta.consultas || [];
+            } catch (error) {
+              console.error(
+                `Erro ao buscar consultas do aluno ${aluno.codusuario}:`,
+                error,
+              );
 
-
-        /* ===================================================
-           4. FILTRAR SOMENTE CONSULTAS DO TREINADOR
-           =================================================== */
-
-        const consultasTreinador =
-          todasConsultas.filter(
-            (consulta) =>
-              Number(
-                consulta.codtreinador
-              ) === Number(
-                codtreinador
-              ) &&
-              consulta.status ===
-                "agendada"
-          );
-
-
-        /* ===================================================
-           5. COLOCAR O NOME DO ALUNO
-           =================================================== */
-
-        const consultasComAluno =
-          consultasTreinador.map(
-            (consulta) => {
-
-              const aluno =
-                alunos.find(
-                  (item) =>
-                    Number(
-                      item.codusuario
-                    ) ===
-                    Number(
-                      consulta.codusuario
-                    )
-                );
-
-              return {
-                ...consulta,
-                nome:
-                  aluno?.nome ||
-                  "Paciente",
-              };
+              return [];
             }
-          );
-
-
-        /* ===================================================
-           6. ORDENAR POR DATA E HORA
-           =================================================== */
-
-        consultasComAluno.sort(
-          (a, b) => {
-
-            const dataA =
-              new Date(
-                `${String(
-                  a.dataconsulta
-                ).split("T")[0]}T${
-                  a.horaconsulta ||
-                  "00:00:00"
-                }`
-              );
-
-            const dataB =
-              new Date(
-                `${String(
-                  b.dataconsulta
-                ).split("T")[0]}T${
-                  b.horaconsulta ||
-                  "00:00:00"
-                }`
-              );
-
-            return dataA - dataB;
-          }
+          }),
         );
 
+        const todasConsultas = consultasPorAluno.flat();
 
-        /* ===================================================
-           7. SALVAR CONSULTAS
-           =================================================== */
+        const consultasTreinador = todasConsultas.filter(
+          (consulta) =>
+            Number(consulta.codtreinador) === Number(codtreinador) &&
+            consulta.status === "agendada",
+        );
 
-        setData({
-          consultas:
-            consultasComAluno,
+        const consultasComAluno = consultasTreinador.map((consulta) => {
+          const aluno = alunos.find(
+            (item) => Number(item.codusuario) === Number(consulta.codusuario),
+          );
+
+          return {
+            ...consulta,
+            nome: aluno?.nome || "Aluno",
+          };
         });
 
+        consultasComAluno.sort((a, b) => {
+          const dataA = new Date(
+            `${String(a.dataconsulta).split("T")[0]}T${
+              a.horaconsulta || "00:00:00"
+            }`,
+          );
+
+          const dataB = new Date(
+            `${String(b.dataconsulta).split("T")[0]}T${
+              b.horaconsulta || "00:00:00"
+            }`,
+          );
+
+          return dataA - dataB;
+        });
+
+        setData({
+          consultas: consultasComAluno,
+        });
       } catch (error) {
-
-        console.error(
-          "Erro ao mostrar consultas:",
-          error
-        );
-
+        console.error("Erro ao mostrar consultas:", error);
       }
     };
 
     pegarConsultas();
-
   }, [codtreinador]);
 
+  const proximas = data.consultas.slice(0, 4);
 
   return (
-    <div className={alertasStyles.alertas}>
-
+    <section className={alertasStyles.alertas}>
       <div className={alertasStyles.title}>
+        <h2>Próximas consultas</h2>
 
-        <h2>
-          Próximas Consultas
-        </h2>
-
-        <Link
-          href="./calendario"
-          className={
-            alertasStyles.botaoLink
-          }
-        >
+        <Link href="./calendario" className={alertasStyles.botaoLink}>
           Ver todos
         </Link>
-
       </div>
 
+      {proximas.length === 0 && (
+        <p className={alertasStyles.vazio}>
+          Nenhuma consulta agendada.
+        </p>
+      )}
 
       <ul className={alertasStyles.lista}>
+        {proximas.map((alerta) => {
+          const dataConsulta = lerData(alerta.dataconsulta);
+          const hoje = dataConsulta ? ehHoje(dataConsulta) : false;
 
-        {data.consultas
-          .slice(0, 4)
-          .map((alerta) => (
-
-            <li
-              key={
-                alerta.codconsulta
-              }
-              className={
-                alertasStyles.listaAlertas
-              }
-            >
-
-              <div
-                className={
-                  alertasStyles.avatarInicial
-                }
-              >
-                {String(
-                  alerta.nome ||
-                    "Paciente"
-                )
-                  .charAt(0)
-                  .toUpperCase()}
-              </div>
-
-
-              <div
-                className={
-                  alertasStyles.alertaConteudo
-                }
-              >
-
-                <div
-                  className={
-                    alertasStyles.alertaTopo
-                  }
+          return (
+            <li key={alerta.codconsulta} className={alertasStyles.listaAlertas}>
+              {dataConsulta && (
+                <time
+                  dateTime={String(alerta.dataconsulta).split("T")[0]}
+                  className={`${alertasStyles.dataBloco} ${
+                    hoje ? alertasStyles.dataHoje : ""
+                  }`}
                 >
+                  <span className={alertasStyles.dataMes}>
+                    {hoje ? "Hoje" : mesAbreviado(dataConsulta)}
+                  </span>
+                  <span className={alertasStyles.dataDia}>
+                    {dataConsulta.getDate()}
+                  </span>
+                </time>
+              )}
 
-                  <span
-                    className={
-                      alertasStyles.alertaNome
-                    }
-                  >
+              <div className={alertasStyles.alertaConteudo}>
+                <div className={alertasStyles.alertaTopo}>
+                  <span className={alertasStyles.alertaNome}>
                     {alerta.nome}
                   </span>
 
-
-                  <span
-                    className={
-                      alertasStyles.alertaData
-                    }
-                  >
-                    {new Date(
-                      alerta.dataconsulta
-                    ).toLocaleDateString(
-                      "pt-BR"
-                    )}
+                  <span className={alertasStyles.alertaHora}>
+                    {alerta.horaconsulta?.slice(0, 5)}
                   </span>
-
                 </div>
 
-
-                <p
-                  className={
-                    alertasStyles.alertaTexto
-                  }
-                >
-                  {alerta.observacoes ||
-                    "Consulta agendada"}
+                <p className={alertasStyles.alertaTexto}>
+                  {alerta.observacoes || "Consulta agendada"}
                 </p>
-
-
-                <span
-                  className={
-                    alertasStyles.alertaHora
-                  }
-                >
-                  {alerta.horaconsulta?.slice(
-                    0,
-                    5
-                  )}
-                </span>
-
               </div>
-
             </li>
-
-          ))}
-
+          );
+        })}
       </ul>
-
-    </div>
+    </section>
   );
 }
 
 
-/* =========================================================
-   PÁGINA DO TREINADOR
-   ========================================================= */
 
 export default function TreinadorPage() {
+  const { data: session, status } = useSession();
 
-  const {
-    data: session,
-    status,
-  } = useSession();
-
-
-  /*
-   * No seu NextAuth, o ID do usuário
-   * está em session.user.id.
-   *
-   * Exemplo:
-   *
-   * id: 101
-   */
-
-  const codtreinador =
-    session?.user?.id;
-
+  const codtreinador = session?.user?.id;
 
   if (status === "loading") {
     return (
-      <div>
+      <p className={styles.mensagemTela} role="status">
         Carregando...
-      </div>
+      </p>
     );
   }
 
-
   return (
-    <div
-      className={
-        styles.dashboard
-      }
-    >
+    <div className={styles.dashboard}>
+      <Sidebar profile={profiles.treinador} />
 
-      <Sidebar
-        profile={
-          profiles.treinador
-        }
-      />
-
-
-      <div>
-
+      <div className={styles.wrapperPrincipal}>
         <Top />
 
+        <main className={styles.containerPrincipal}>
+          <Cards codtreinador={codtreinador} />
 
-        <div
-          className={
-            styles.containerPrincipal
-          }
-        >
-
-          <Cards
-            codtreinador={
-              codtreinador
-            }
-          />
-
-
-          <div
-            className={
-              styles.conteudo
-            }
-          >
-
-            <Alertas
-              codtreinador={
-                codtreinador
-              }
-            />
-
+          <div className={`${styles.conteudo} ${styles.conteudoUnico}`}>
+            <Alertas codtreinador={codtreinador} />
           </div>
-
-        </div>
-
+        </main>
       </div>
-
     </div>
   );
 }

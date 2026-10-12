@@ -33,4 +33,4 @@ export default function LogProf() {
         </div>
         </div>
     )
-}
+} 

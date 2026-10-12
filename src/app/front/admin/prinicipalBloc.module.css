@@ -1,166 +1,354 @@
-.principalBloc{
-    display: flex;
-    flex-direction: row;
-    gap: 40px;
-    justify-content: center;
-    align-items: flex-start;
-    background-color: #D5CDB8;
-    margin-top: 40px;
+/* ---------- Página ---------- */
+
+.container {
+  min-height: 100vh;
+  background: var(--areia);
+  color: var(--texto);
 }
 
+.principalBloc {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 32px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  align-items: start;
+}
+
+/* Cada coluna é um card; mesma superfície, mesma sombra, mesma estrutura */
 .colunaFormulario,
-.colunaUsuarios{
-    display: flex;
-    flex-direction: column;
+.colunaUsuarios {
+  background: var(--papel);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-card);
+  box-shadow: var(--sombra-card);
+  padding: 28px;
 }
 
-.input{
-    display: flex;
-    background-color: #fafafa;
-    border-color: #644c10;
-    border-width: 2px;
-    border-style: solid;
-    border-radius: 15px;
-    padding: 5px;
-}
-.button{
-    display: flex;
-    background-color: #454c3b;
-    border-color: #454c3b;
-    color: #D5CDB8;                                   
-    border-width: 2px;
-    border-style: solid;
-    padding: 10px;
-    width: 200px;
-    margin: 20px auto 0;
-    border-radius: 15px;
-    align-items: center;
-    justify-content: center;
+@media (max-width: 900px) {
+  .principalBloc {
+    grid-template-columns: 1fr;
+    padding: 24px 16px 48px;
+  }
 }
 
-.formulario{
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px;
-    height: 550px;
-    background-color: #B4AA8E;
-    align-items: center;
-    box-shadow: 2px 2px 5px black;
-    width: 450px;
-    border-radius: 15px;
-    margin: 50px auto;
-    overflow-y: auto;
+/* ---------- Cabeçalho de cada card ---------- */
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
-.containerUsers{
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px;
-    background-color: #B4AA8E;
-    box-shadow: 2px 2px 5px black;
-    width: 450px;
-    border-radius: 15px;
-    height: 550px;
-    margin-top: 10px;
+.iconeCabecalho {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--raio-item);
+  background: var(--musgo);
+  color: #fff;
 }
 
-.users{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
-    background-color: #fafafa;
-    border-radius: 15px;
-    margin-bottom: 12px;
+.titulo {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--texto);
 }
 
-.topoCard{
-    display: flex;
-    flex-direction: row;
-    align-self: flex-end;
-    align-items: center;
-    justify-content: center;
-    background-color: #656c47;
-    padding: 5px;
-    border-radius: 10px;
-    color: #fafafa;
-    width: fit-content;
-    font-size: 12px;
+.subtitulo {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--texto-suave);
 }
 
-.areaButtons{
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
+/* ---------- Formulário ---------- */
+
+.formulario {
+  display: block;
 }
 
-.editButton{
-    border: none;
-    background-color: #656c47;
-    color: white;
-
-    padding: 8px 12px;
-
-    border-radius: 10px;
-
-    cursor: pointer;
+.grade {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
 }
 
-.deleteButton{
-    border: none;
-    background-color: #a63d3d;
-    color: white;
+.span12 { grid-column: span 12; }
+.span8  { grid-column: span 8; }
+.span7  { grid-column: span 7; }
+.span6  { grid-column: span 6; }
+.span5  { grid-column: span 5; }
+.span4  { grid-column: span 4; }
+.span3  { grid-column: span 3; }
 
-    padding: 8px 12px;
-
-    border-radius: 10px;
-
-    cursor: pointer;
+@media (max-width: 600px) {
+  .span8, .span7, .span6, .span5, .span4, .span3 {
+    grid-column: span 12;
+  }
 }
 
-.scrollUsers{
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-height: 500px;
-    overflow-y: auto;
-    padding-right: 5px;
+/* Título de seção: separa grupos de campos (proximidade) */
+.secao {
+  grid-column: span 12;
+  margin: 12px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--borda);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texto);
 }
 
-.camposInput {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 400px;
+.secao:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
-.container{
-    background-color: #D5CDB8;
+/* Label fica colado ao SEU campo (6px) e longe do campo anterior (16px) */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.novoUsuario{
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
-
-    position: static;
-    width: 450px;
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto);
 }
 
-.blocoTexto{
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--texto);
+  background: var(--papel-claro);
+  border: 1.5px solid var(--borda-input);
+  border-radius: var(--raio-item);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.titulo{
-    font-size: 20px;
-    font-weight: bold;
+.input::placeholder {
+  color: var(--placeholder);
 }
 
-.colunaUsuarios .buscaContainer{
-    width: 450px;
+.input:hover {
+  border-color: var(--musgo);
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--oliva);
+  box-shadow: var(--foco);
+}
+
+.rodapeFormulario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.button {
+  align-self: flex-end;
+  min-width: 200px;
+  min-height: 46px;
+  padding: 10px 24px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--papel);
+  background: var(--oliva);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.button:hover {
+  background: var(--oliva-hover);
+}
+
+.button:focus-visible {
+  outline: 3px solid var(--musgo);
+  outline-offset: 3px;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .button {
+    align-self: stretch;
+  }
+}
+
+/* ---------- Mensagens (substituem os alert()) ---------- */
+
+.mensagem {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--raio-item);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.mensagemErro {
+  background: #f6e3df;
+  border: 1px solid #dcaaa2;
+  color: #7a2b22;
+}
+
+.mensagemSucesso {
+  background: var(--musgo-claro);
+  border: 1px solid #b9bf98;
+  color: var(--oliva);
+}
+
+/* ---------- Lista de usuários ---------- */
+
+.buscaWrap {
+  margin-bottom: 16px;
+}
+
+.contagem {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--texto-suave);
+}
+
+.scrollUsers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 620px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.users {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--papel-claro);
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--musgo-claro);
+  color: var(--oliva);
+  font-weight: 700;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.nome,
+.email {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nome {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.email {
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--texto-suave);
+}
+
+.lateral {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.topoCard {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--musgo);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.areaButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.editButton,
+.deleteButton {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.editButton {
+  background: var(--musgo);
+}
+
+.editButton:hover {
+  background: var(--oliva);
+}
+
+.deleteButton {
+  background: var(--perigo);
+}
+
+.deleteButton:hover {
+  background: var(--perigo-hover);
+}
+
+.editButton:focus-visible,
+.deleteButton:focus-visible {
+  outline: 3px solid var(--oliva);
+  outline-offset: 2px;
+}
+
+.vazio {
+  margin: 8px 0;
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--texto-suave);
+  border: 1.5px dashed var(--borda-input);
+  border-radius: 14px;
 }

@@ -3,6 +3,15 @@
 import { useState, useEffect } from "react";
 import styles from "./ModalExercicio.module.css";
 
+const FORM_VAZIO = {
+  nome: "",
+  series: "",
+  repeticoes: "",
+  peso: "",
+  descricao: "",
+  descanso: "",
+};
+
 export default function ModalExercicio({
   modo,
   exercicio,
@@ -10,15 +19,9 @@ export default function ModalExercicio({
   fechar,
   atualizar,
 }) {
-  const [form, setForm] = useState({
-    nome: "",
-    series: "",
-    repeticoes: "",
-    peso: "",
-    descricao: "",
-    descanso: "",
-  });
+  const [form, setForm] = useState(FORM_VAZIO);
   const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState(""); // substitui os alert()
 
   useEffect(() => {
     if (modo === "editar" && exercicio) {
@@ -31,16 +34,19 @@ export default function ModalExercicio({
         descanso: exercicio.descanso || "",
       });
     } else {
-      setForm({
-        nome: "",
-        series: "",
-        repeticoes: "",
-        peso: "",
-        descricao: "",
-        descanso: "",
-      });
+      setForm(FORM_VAZIO);
     }
+    setErro("");
   }, [modo, exercicio]);
+
+  // Esc fecha o modal (padrão esperado em diálogos)
+  useEffect(() => {
+    function aoPressionar(e) {
+      if (e.key === "Escape" && !salvando) fechar();
+    }
+    document.addEventListener("keydown", aoPressionar);
+    return () => document.removeEventListener("keydown", aoPressionar);
+  }, [fechar, salvando]);
 
   function alterarCampo(e) {
     setForm({
@@ -50,21 +56,23 @@ export default function ModalExercicio({
   }
 
   async function salvar() {
+    setErro("");
+
     if (!form.nome.trim()) {
-      alert("Por favor, informe o nome do exercício");
+      setErro("Por favor, informe o nome do exercício.");
       return;
     }
     if (!form.series || parseInt(form.series) < 1) {
-      alert("Por favor, informe o número de séries");
+      setErro("Por favor, informe o número de séries.");
       return;
     }
     if (!form.repeticoes || parseInt(form.repeticoes) < 1) {
-      alert("Por favor, informe o número de repetições");
+      setErro("Por favor, informe o número de repetições.");
       return;
     }
 
     if (!codtreino) {
-      alert("Nenhum treino selecionado");
+      setErro("Nenhum treino selecionado.");
       return;
     }
 
@@ -81,32 +89,33 @@ export default function ModalExercicio({
         codtreino: parseInt(codtreino),
       };
 
-      console.log("Enviando dados:", body);
-
       let response;
 
       if (modo === "novo") {
-        response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        response = await fetch(
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
           },
-          body: JSON.stringify(body),
-        });
+        );
       } else {
         if (!exercicio?.codexercicio) {
           throw new Error("ID do exercício não encontrado");
         }
 
         response = await fetch(
-         `${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio/${exercicio.codexercicio}`,
+          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Exercicio/${exercicio.codexercicio}`,
           {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(body),
-          }
+          },
         );
       }
 
@@ -115,73 +124,98 @@ export default function ModalExercicio({
         let errorMessage;
         try {
           const errorData = await response.json();
-          errorMessage = errorData.error || errorData.details || response.statusText;
+          errorMessage =
+            errorData.error || errorData.details || response.statusText;
           // Se errorData for um objeto, converte para string legível
-          if (typeof errorMessage === 'object') {
+          if (typeof errorMessage === "object") {
             errorMessage = JSON.stringify(errorMessage);
           }
         } catch (e) {
-          errorMessage = await response.text() || `Erro ${response.status}`;
+          errorMessage = (await response.text()) || `Erro ${response.status}`;
         }
         throw new Error(errorMessage);
       }
 
       await atualizar();
-      fechar();
-      alert("Exercício salvo com sucesso!");
-
+      fechar(); // o card novo/atualizado aparecendo na lista já confirma o salvamento
     } catch (err) {
       console.error("Erro ao salvar:", err);
-      alert(`Erro ao salvar exercício: ${err.message}`);
+      setErro(`Erro ao salvar exercício: ${err.message}`);
     } finally {
       setSalvando(false);
     }
   }
 
   return (
-    <div className={styles.overlay} onClick={fechar}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h2>{modo === "novo" ? "Novo Exercício" : "Editar Exercício"}</h2>
+    <div className={styles.overlay} onClick={salvando ? undefined : fechar}>
+      <form
+        className={styles.modal}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-exercicio-titulo"
+        noValidate
+        onClick={(e) => e.stopPropagation()}
+        onSubmit={(e) => {
+          e.preventDefault();
+          salvar();
+        }}
+      >
+        <h2 id="modal-exercicio-titulo">
+          {modo === "novo" ? "Novo exercício" : "Editar exercício"}
+        </h2>
+        <p className={styles.legenda}>Campos com * são obrigatórios.</p>
 
-        <label>Nome do Exercício *</label>
-        <input
-          name="nome"
-          value={form.nome}
-          onChange={alterarCampo}
-          placeholder="Ex: Supino reto"
-          disabled={salvando}
-        />
+        <div className={styles.campo}>
+          <label htmlFor="ex-nome">Nome do exercício *</label>
+          <input
+            id="ex-nome"
+            name="nome"
+            value={form.nome}
+            onChange={alterarCampo}
+            placeholder="Ex.: Supino reto"
+            disabled={salvando}
+            aria-required="true"
+            autoFocus
+          />
+        </div>
 
-        <div className={styles.duplo}>
-          <div>
-            <label>Séries *</label>
+        <div className={styles.trio}>
+          <div className={styles.campo}>
+            <label htmlFor="ex-series">Séries *</label>
             <input
+              id="ex-series"
               name="series"
               type="number"
+              inputMode="numeric"
               min="1"
               value={form.series}
               onChange={alterarCampo}
               placeholder="3"
               disabled={salvando}
+              aria-required="true"
             />
           </div>
 
-          <div>
-            <label>Repetições *</label>
+          <div className={styles.campo}>
+            <label htmlFor="ex-repeticoes">Repetições *</label>
             <input
+              id="ex-repeticoes"
               name="repeticoes"
               type="number"
+              inputMode="numeric"
               min="1"
               value={form.repeticoes}
               onChange={alterarCampo}
               placeholder="12"
               disabled={salvando}
+              aria-required="true"
             />
           </div>
 
-          <div>
-            <label>Descanso (segundos)</label>
+          <div className={styles.campo}>
+            <label htmlFor="ex-descanso">Descanso (s)</label>
             <input
+              id="ex-descanso"
               name="descanso"
               type="number"
               step="0.5"
@@ -194,9 +228,10 @@ export default function ModalExercicio({
           </div>
         </div>
 
-        <div>
-          <label>Peso (kg)</label>
+        <div className={styles.campo}>
+          <label htmlFor="ex-peso">Peso (kg)</label>
           <input
+            id="ex-peso"
             name="peso"
             type="number"
             step="0.5"
@@ -208,18 +243,28 @@ export default function ModalExercicio({
           />
         </div>
 
-        <label>Descrição</label>
-        <textarea
-          rows={3}
-          name="descricao"
-          value={form.descricao}
-          onChange={alterarCampo}
-          placeholder="Observações sobre o exercício..."
-          disabled={salvando}
-        />
+        <div className={styles.campo}>
+          <label htmlFor="ex-descricao">Descrição</label>
+          <textarea
+            id="ex-descricao"
+            rows={3}
+            name="descricao"
+            value={form.descricao}
+            onChange={alterarCampo}
+            placeholder="Observações sobre o exercício..."
+            disabled={salvando}
+          />
+        </div>
+
+        {erro && (
+          <p role="alert" className={styles.erro}>
+            {erro}
+          </p>
+        )}
 
         <div className={styles.botoes}>
           <button
+            type="button"
             className={styles.cancelar}
             onClick={fechar}
             disabled={salvando}
@@ -227,15 +272,11 @@ export default function ModalExercicio({
             Cancelar
           </button>
 
-          <button
-            className={styles.salvar}
-            onClick={salvar}
-            disabled={salvando}
-          >
+          <button type="submit" className={styles.salvar} disabled={salvando}>
             {salvando ? "Salvando..." : "Salvar"}
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

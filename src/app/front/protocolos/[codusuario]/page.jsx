@@ -38,6 +38,10 @@ export default function TelaProtocolo() {
     dataprotocolo: "",
   });
 
+  // Mensagens na tela no lugar dos alert()
+  const [aviso, setAviso] = useState(null); // { tipo: "erro" | "sucesso", texto }
+  const [erroProtocolo, setErroProtocolo] = useState("");
+
   useEffect(() => {
     if (codusuario && codfisioterapeuta) {
       carregarPaciente();
@@ -123,19 +127,30 @@ export default function TelaProtocolo() {
     }
   }
 
+  function fecharNovoProtocolo() {
+    setMostrarNovoProtocolo(false);
+    setErroProtocolo("");
+    setNovoProtocolo({
+      descricao: "",
+      dataprotocolo: "",
+    });
+  }
+
   async function criarNovoProtocolo() {
+    setErroProtocolo("");
+
     if (!novoProtocolo.descricao.trim()) {
-      alert("Por favor, informe a descrição do protocolo");
+      setErroProtocolo("Por favor, informe a descrição do protocolo.");
       return;
     }
 
     if (!novoProtocolo.dataprotocolo) {
-      alert("Por favor, informe a data do protocolo");
+      setErroProtocolo("Por favor, informe a data do protocolo.");
       return;
     }
 
     if (!codfisioterapeuta) {
-      alert("Fisioterapeuta não identificado");
+      setErroProtocolo("Fisioterapeuta não identificado.");
       return;
     }
 
@@ -160,48 +175,45 @@ export default function TelaProtocolo() {
         const errorData = await response.json();
 
         throw new Error(
-          errorData.error ||
-            errorData.details ||
-            "Erro ao criar protocolo",
+          errorData.error || errorData.details || "Erro ao criar protocolo",
         );
       }
 
       await carregarProtocolos();
 
-      setMostrarNovoProtocolo(false);
-
-      setNovoProtocolo({
-        descricao: "",
-        dataprotocolo: "",
-      });
-
-      alert("Protocolo criado com sucesso!");
+      fecharNovoProtocolo();
+      setAviso({ tipo: "sucesso", texto: "Protocolo criado com sucesso." });
     } catch (err) {
       console.log("Erro ao criar protocolo:", err);
 
-      alert(err.message || "Erro ao criar protocolo");
+      setErroProtocolo(err.message || "Erro ao criar protocolo.");
     }
   }
 
   function abrirNovoExercicio() {
     if (!protocoloSelecionado) {
-      alert("Crie um protocolo primeiro antes de adicionar exercícios");
+      setAviso({
+        tipo: "erro",
+        texto: "Crie um protocolo primeiro antes de adicionar exercícios.",
+      });
       return;
     }
 
+    setAviso(null);
     setModoModal("novo");
     setExercicioSelecionado(null);
     setModalAberto(true);
   }
 
   function editarExercicio(exercicio) {
+    setAviso(null);
     setModoModal("editar");
     setExercicioSelecionado(exercicio);
     setModalAberto(true);
   }
 
   async function excluirExercicio(codexercicio) {
-    const confirmar = confirm(
+    const confirmar = window.confirm(
       "Tem certeza que deseja excluir este exercício?",
     );
 
@@ -223,11 +235,11 @@ export default function TelaProtocolo() {
         await selecionarProtocolo(protocoloSelecionado);
       }
 
-      alert("Exercício excluído com sucesso!");
+      setAviso({ tipo: "sucesso", texto: "Exercício excluído com sucesso." });
     } catch (err) {
       console.log("Erro ao excluir exercício:", err);
 
-      alert("Erro ao excluir exercício");
+      setAviso({ tipo: "erro", texto: "Não foi possível excluir o exercício." });
     }
   }
 
@@ -240,7 +252,7 @@ export default function TelaProtocolo() {
           <Top />
 
           <div className={styles.container}>
-            <div className={styles.loading}>
+            <div className={styles.loading} role="status">
               Carregando...
             </div>
           </div>
@@ -256,6 +268,17 @@ export default function TelaProtocolo() {
       <div className={styles.main}>
         <Top />
 
+        {aviso && (
+          <p
+            role={aviso.tipo === "erro" ? "alert" : "status"}
+            className={`${styles.aviso} ${
+              aviso.tipo === "erro" ? styles.avisoErro : styles.avisoSucesso
+            }`}
+          >
+            {aviso.texto}
+          </p>
+        )}
+
         <div className={styles.container}>
           <div className={styles.left}>
             <PainelPaciente paciente={paciente} />
@@ -264,61 +287,75 @@ export default function TelaProtocolo() {
               protocolos={protocolos}
               protocoloSelecionado={protocoloSelecionado}
               selecionarProtocolo={selecionarProtocolo}
-              onCriarProtocolo={() =>
-                setMostrarNovoProtocolo(true)
-              }
+              onCriarProtocolo={() => setMostrarNovoProtocolo(true)}
             />
 
             {mostrarNovoProtocolo && (
-              <div className={styles.novoTreinoCard}>
-                <h4>Novo Protocolo</h4>
+              <form
+                className={styles.novoTreinoCard}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  criarNovoProtocolo();
+                }}
+              >
+                <h4>Novo protocolo</h4>
 
-                <input
-                  type="text"
-                  placeholder="Descrição (ex: Fortalecimento de Lombar)"
-                  value={novoProtocolo.descricao}
-                  onChange={(e) =>
-                    setNovoProtocolo({
-                      ...novoProtocolo,
-                      descricao: e.target.value,
-                    })
-                  }
-                />
+                <div className={styles.campo}>
+                  <label htmlFor="protocolo-descricao" className={styles.label}>
+                    Descrição
+                  </label>
+                  <input
+                    id="protocolo-descricao"
+                    type="text"
+                    placeholder="Ex.: Fortalecimento de lombar"
+                    autoFocus
+                    value={novoProtocolo.descricao}
+                    onChange={(e) =>
+                      setNovoProtocolo({
+                        ...novoProtocolo,
+                        descricao: e.target.value,
+                      })
+                    }
+                  />
+                </div>
 
-                <input
-                  type="date"
-                  value={novoProtocolo.dataprotocolo}
-                  onChange={(e) =>
-                    setNovoProtocolo({
-                      ...novoProtocolo,
-                      dataprotocolo: e.target.value,
-                    })
-                  }
-                />
+                <div className={styles.campo}>
+                  <label htmlFor="protocolo-data" className={styles.label}>
+                    Data
+                  </label>
+                  <input
+                    id="protocolo-data"
+                    type="date"
+                    value={novoProtocolo.dataprotocolo}
+                    onChange={(e) =>
+                      setNovoProtocolo({
+                        ...novoProtocolo,
+                        dataprotocolo: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                {erroProtocolo && (
+                  <p role="alert" className={styles.erroCampo}>
+                    {erroProtocolo}
+                  </p>
+                )}
 
                 <div className={styles.botoesTreino}>
                   <button
+                    type="button"
                     className={styles.cancelar}
-                    onClick={() => {
-                      setMostrarNovoProtocolo(false);
-
-                      setNovoProtocolo({
-                        descricao: "",
-                        dataprotocolo: "",
-                      });
-                    }}
+                    onClick={fecharNovoProtocolo}
                   >
                     Cancelar
                   </button>
 
-                  <button
-                    className={styles.salvar}
-                    onClick={criarNovoProtocolo}
-                  >
-                    Criar Protocolo
+                  <button type="submit" className={styles.salvar}>
+                    Criar protocolo
                   </button>
                 </div>
-              </div>
+              </form>
             )}
           </div>
 

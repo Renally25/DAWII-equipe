@@ -1,21 +1,64 @@
 .dashboard {
-    display: flex;
-    min-height: 100vh;
-    background-color: #d5cdb8;
-    width: 100vw;
-    overflow-x: hidden;
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+  background-color: var(--areia);
+  color: var(--texto);
 }
 
 .container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0; /* Evita quebras de layout flex */
+  flex: 1;
+  min-width: 0; /* evita quebras de layout no flex */
+  display: flex;
+  flex-direction: column;
 }
 
+.topoPagina {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 24px 32px 12px;
+}
+
+.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--oliva);
+  text-decoration: none;
+}
+
+.voltar:hover {
+  text-decoration: underline;
+}
+
+.voltar:focus-visible {
+  outline: 3px solid var(--musgo);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.voltar svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Mesmo estilo de título das outras telas (antes: 28px/700 em azul-marinho) */
 .titulo {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1f2a40;
-    margin: 30px 30px 10px 30px;
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--texto);
+}
+
+@media (max-width: 1000px) {
+  .topoPagina {
+    padding-inline: 16px;
+  }
 }

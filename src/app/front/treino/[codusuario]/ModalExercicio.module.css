@@ -1,134 +1,183 @@
-.overlay{
-
-    position:fixed;
-
-    inset:0;
-
-    background:rgba(0,0,0,.45);
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    z-index:999;
-
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: rgba(59, 66, 49, 0.55); /* oliva translúcido, em vez de preto */
 }
 
-.modal{
-
-    background:white;
-
-    width:550px;
-
-    border-radius:18px;
-
-    padding:30px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:14px;
-
+.modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: min(560px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 28px;
+  background: var(--papel);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-card);
+  box-shadow: 0 24px 60px rgba(30, 36, 24, 0.35);
 }
 
-.modal h2{
-
-    margin:0 0 10px;
-
-    color:#3B4231;
-
+.modal h2 {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--texto);
 }
 
-.modal label{
+.legenda {
+  margin: -8px 0 0;
+  font-size: 13px;
+  color: var(--texto-suave);
+}
 
-    font-weight:600;
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
 
-    color:#656C47;
-
+.campo label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto); /* antes verde-musgo #656C47 em 600 */
 }
 
 .modal input,
-.modal textarea{
-
-    width:100%;
-
-    padding:12px;
-
-    border-radius:10px;
-
-    border:1px solid #ccc;
-
-    font-size:15px;
-
+.modal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--texto);
+  background: var(--papel-claro);
+  border: 1.5px solid var(--borda-input);
+  border-radius: var(--raio-item);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.modal textarea{
-
-    resize:none;
-
+.modal input::placeholder,
+.modal textarea::placeholder {
+  color: var(--placeholder);
 }
 
-.duplo{
-
-    display:flex;
-
-    gap:20px;
-
+.modal input:hover:not(:disabled),
+.modal textarea:hover:not(:disabled) {
+  border-color: var(--musgo);
 }
 
-.duplo div{
-
-    flex:1;
-
+.modal input:focus-visible,
+.modal textarea:focus-visible {
+  outline: none;
+  border-color: var(--oliva);
+  box-shadow: var(--foco);
 }
 
-.botoes{
-
-    display:flex;
-
-    justify-content:flex-end;
-
-    gap:12px;
-
-    margin-top:10px;
-
+.modal input:disabled,
+.modal textarea:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
-.cancelar{
-
-    background:#ddd;
-
-    border:none;
-
-    padding:12px 20px;
-
-    border-radius:10px;
-
-    cursor:pointer;
-
+.modal textarea {
+  resize: vertical;
+  min-height: 84px;
 }
 
-.salvar{
-
-    background:#656C47;
-
-    color:white;
-
-    border:none;
-
-    padding:12px 22px;
-
-    border-radius:10px;
-
-    cursor:pointer;
-
+/* Séries, repetições e descanso lado a lado (antes .duplo, com 3 colunas) */
+.trio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.salvar:hover{
+@media (max-width: 520px) {
+  .trio {
+    grid-template-columns: 1fr;
+  }
 
-    background:#4f5738;
+  .modal {
+    padding: 22px 18px;
+  }
+}
 
+.erro {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--raio-item);
+  background: #f6e3df;
+  border: 1px solid #dcaaa2;
+  color: #7a2b22;
+  font-size: 14px;
+}
+
+.botoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.cancelar,
+.salvar {
+  min-height: 44px;
+  padding: 10px 24px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.cancelar {
+  color: var(--oliva);
+  background: transparent;
+  border: 1.5px solid var(--oliva);
+}
+
+.cancelar:hover:not(:disabled) {
+  background: var(--oliva);
+  color: var(--papel);
+}
+
+.salvar {
+  color: var(--papel);
+  background: var(--oliva);
+  border: 1.5px solid var(--oliva);
+}
+
+.salvar:hover:not(:disabled) {
+  background: var(--oliva-hover);
+}
+
+.cancelar:disabled,
+.salvar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelar:focus-visible,
+.salvar:focus-visible {
+  outline: 3px solid var(--musgo);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal input,
+  .modal textarea,
+  .cancelar,
+  .salvar {
+    transition: none;
+  }
 }

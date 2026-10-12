@@ -16,7 +16,7 @@ export const profiles = {
     avatarSrc: "/logo.png",
     items: [
       { label: "Visão Geral", href: "/front/treinador" },
-      { label: "Pacientes", href: "/front/pacientesTreinador" },
+      { label: "Alunos", href: "/front/pacientesTreinador" },
       { label: "Calendário", href: "/front/calendario" },
       { label: "Configurações", href: "/front/config" },
     ],

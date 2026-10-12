@@ -12,6 +12,28 @@ import Sidebar from "../sidebar/sidebar";
 import { profiles } from "../sidebar/profiles";
 import Top from "../top/top";
 
+function lerData(valor) {
+  if (!valor) return null;
+  const [ano, mes, dia] = String(valor).split("T")[0].split("-").map(Number);
+  if (!ano || !mes || !dia) return null;
+  return new Date(ano, mes - 1, dia);
+}
+
+function ehHoje(data) {
+  const agora = new Date();
+  return (
+    data.getFullYear() === agora.getFullYear() &&
+    data.getMonth() === agora.getMonth() &&
+    data.getDate() === agora.getDate()
+  );
+}
+
+function mesAbreviado(data) {
+  return data
+    .toLocaleDateString("pt-BR", { month: "short" })
+    .replace(".", "");
+}
+
 function Cards({ codfisioterapeuta }) {
   const [dados, setDados] = useState({
     totalPacientes: 0,
@@ -97,7 +119,7 @@ function Cards({ codfisioterapeuta }) {
 
           const dataConsulta = String(consulta.dataconsulta).split("T")[0];
 
-          return dataConsulta === dataHoje;
+          return dataConsulta === dataHoje && consulta.status === "agendada";
         });
 
         setDados((anterior) => ({
@@ -112,27 +134,56 @@ function Cards({ codfisioterapeuta }) {
     buscarDados();
   }, [codfisioterapeuta]);
 
-  return (
+  const itens = [
+    {
+      href: "./paciFisio",
+      classe: cardsStyles.pacientes,
+      titulo: "Total de pacientes",
+      valor: dados.totalPacientes,
+      descricao:
+        dados.totalPacientes === 0
+          ? "Nenhum paciente cadastrado"
+          : dados.totalPacientes === 1
+            ? "Paciente cadastrado"
+            : "Pacientes cadastrados",
+    },
+    {
+      href: "./calendario",
+      classe: cardsStyles.consultas,
+      titulo: "Consultas hoje",
+      valor: dados.consultasHoje,
+      descricao:
+        dados.consultasHoje === 0
+          ? "Nenhuma consulta agendada para hoje"
+          : "Agendadas para hoje",
+    },
+  ];
+
+    return (
     <div className={cardsStyles.container}>
-      <div className={cardsStyles.card}>
-        <span className={cardsStyles.titulo}>Total de Pacientes</span>
+      {itens.map((item) => (
+        <Link
+          key={item.titulo}
+          href={item.href}
+          className={`${cardsStyles.card} ${item.classe}`}
+        >
+          <span className={cardsStyles.titulo}>{item.titulo}</span>
 
-        <span className={cardsStyles.valor}>{dados.totalPacientes}</span>
+          <span
+            className={`${cardsStyles.valor} ${
+              item.valor === 0 ? cardsStyles.valorZero : ""
+            }`}
+          >
+            {item.valor}
+          </span>
 
-        <span className={cardsStyles.descricao}>Pacientes cadastrados</span>
-      </div>
-
-      <div className={cardsStyles.card}>
-        <span className={cardsStyles.titulo}>Consultas Hoje</span>
-
-        <span className={cardsStyles.valor}>{dados.consultasHoje}</span>
-
-        <span className={cardsStyles.descricao}>Agendadas para hoje</span>
-      </div>
+          <span className={cardsStyles.descricao}>{item.descricao}</span>
+        </Link>
+      ))}
     </div>
   );
 }
-
+  
 function Alertas({ codfisioterapeuta }) {
   const [data, setData] = useState({
     consultas: [],
@@ -233,8 +284,10 @@ function Alertas({ codfisioterapeuta }) {
     pegarConsultas();
   }, [codfisioterapeuta]);
 
+    const proximas = data.consultas.slice(0, 4);
+
   return (
-    <div className={alertasStyles.alertas}>
+    <section className={alertasStyles.alertas}>
       <div className={alertasStyles.title}>
         <h2>Próximas Consultas</h2>
 
@@ -243,38 +296,55 @@ function Alertas({ codfisioterapeuta }) {
         </Link>
       </div>
 
+         {proximas.length === 0 && (
+        <p className={alertasStyles.vazio}>
+          Nenhuma consulta agendada.
+        </p>
+      )}
+
       <ul className={alertasStyles.lista}>
-        {data.consultas.slice(0, 4).map((alerta) => (
-          <li key={alerta.codconsulta} className={alertasStyles.listaAlertas}>
-            <div className={alertasStyles.avatarInicial}>
-              {String(alerta.nome || "Paciente")
-                .charAt(0)
-                .toUpperCase()}
-            </div>
+        {proximas.map((alerta) => {
+          const dataConsulta = lerData(alerta.dataconsulta);
+          const hoje = dataConsulta ? ehHoje(dataConsulta) : false;
 
-            <div className={alertasStyles.alertaConteudo}>
-              <div className={alertasStyles.alertaTopo}>
-                <span className={alertasStyles.alertaNome}>{alerta.nome}</span>
+          return (
+            <li key={alerta.codconsulta} className={alertasStyles.listaAlertas}>
+              {dataConsulta && (
+                <time
+                  dateTime={String(alerta.dataconsulta).split("T")[0]}
+                  className={`${alertasStyles.dataBloco} ${
+                    hoje ? alertasStyles.dataHoje : ""
+                  }`}
+                >
+                  <span className={alertasStyles.dataMes}>
+                    {hoje ? "Hoje" : mesAbreviado(dataConsulta)}
+                  </span>
+                  <span className={alertasStyles.dataDia}>
+                    {dataConsulta.getDate()}
+                  </span>
+                </time>
+              )}
 
-                <span className={alertasStyles.alertaData}>
-                  {alerta.dataconsulta
-                    ? new Date(alerta.dataconsulta).toLocaleDateString("pt-BR")
-                    : ""}
-                </span>
+              <div className={alertasStyles.alertaConteudo}>
+                <div className={alertasStyles.alertaTopo}>
+                  <span className={alertasStyles.alertaNome}>
+                    {alerta.nome}
+                  </span>
+
+                  <span className={alertasStyles.alertaHora}>
+                    {alerta.horaconsulta?.slice(0, 5)}
+                  </span>
+                </div>
+
+                <p className={alertasStyles.alertaTexto}>
+                  {alerta.observacoes || "Consulta agendada"}
+                </p>
               </div>
-
-              <p className={alertasStyles.alertaTexto}>
-                {alerta.observacoes || "Consulta agendada"}
-              </p>
-
-              <span className={alertasStyles.alertaHora}>
-                {alerta.horaconsulta?.slice(0, 5)}
-              </span>
-            </div>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
-    </div>
+    </section>
   );
 }
 
@@ -283,11 +353,15 @@ export default function FisioterapeutaPage() {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
-    return <p>Carregando...</p>;
+    return <p className={styles.mensagemTela} role="status">
+  Carregando...
+</p>
   }
 
   if (!session) {
-    return <p>Carregando...</p>;
+    return <p className={styles.mensagemTela} role="status">
+  Carregando...
+</p>
   }
 
   const codfisioterapeuta = session.user.id;
@@ -302,7 +376,7 @@ export default function FisioterapeutaPage() {
         <main className={styles.containerPrincipal}>
           <Cards codfisioterapeuta={codfisioterapeuta} />
 
-          <div className={styles.conteudo}>
+          <div className={`${styles.conteudo} ${styles.conteudoUnico}`}>
             <Alertas codfisioterapeuta={codfisioterapeuta} />
           </div>
         </main>
