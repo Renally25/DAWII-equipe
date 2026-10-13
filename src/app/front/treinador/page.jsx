@@ -192,91 +192,61 @@ function Alertas({ codtreinador }) {
       return;
     }
 
-    const pegarConsultas = async () => {
-      try {
-        const responseAlunos = await fetch(
-          `${process.env.NEXT_PUBLIC_AUTH_API}/api/Aluno_Paciente`,
-        );
+     const pegarConsultas = async () => {
+  try {
+    const responseConsulta = await fetch(
+      `${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta?codusuario=${codtreinador}`
+    );
 
-        if (!responseAlunos.ok) {
-          throw new Error("Erro ao buscar alunos.");
-        }
+    if (!responseConsulta.ok) {
+      throw new Error("Erro ao buscar consultas.");
+    }
 
-        const dataAlunos = await responseAlunos.json();
+    const dataConsulta = await responseConsulta.json();
 
-        const alunos = dataAlunos.pacientes || [];
+    console.log("RESPOSTA DA API:", dataConsulta);
 
-        const consultasPorAluno = await Promise.all(
-          alunos.map(async (aluno) => {
-            try {
-              const responseConsulta = await fetch(
-                `${process.env.NEXT_PUBLIC_AUTH_API}/api/Consulta?codusuario=${aluno.codusuario}`,
-              );
+    const consultas = dataConsulta.consultas || [];
 
-              if (!responseConsulta.ok) {
-                return [];
-              }
+    const consultasFisioterapeuta = consultas
+      .filter(
+        (consulta) =>
+          Number(consulta.codtreinador) ===
+            Number(codtreinador) &&
+          consulta.status === "agendada"
+      )
+      .map((consulta) => ({
+        ...consulta,
+        codconsulta: consulta.id,
+        dataconsulta: consulta.date,
+        horaconsulta: consulta.time,
+        nome: consulta.patient || "Paciente",
+      }));
 
-              const dataConsulta = await responseConsulta.json();
+    console.log(
+      "CONSULTAS DA FISIOTERAPEUTA:",
+      consultasFisioterapeuta
+    );
 
-              if (Array.isArray(dataConsulta)) {
-                return dataConsulta;
-              }
+    consultasFisioterapeuta.sort((a, b) => {
+      const dataA = new Date(
+        `${a.dataconsulta}T${a.horaconsulta}`
+      );
 
-              return dataConsulta.consultas || [];
-            } catch (error) {
-              console.error(
-                `Erro ao buscar consultas do aluno ${aluno.codusuario}:`,
-                error,
-              );
+      const dataB = new Date(
+        `${b.dataconsulta}T${b.horaconsulta}`
+      );
 
-              return [];
-            }
-          }),
-        );
+      return dataA - dataB;
+    });
 
-        const todasConsultas = consultasPorAluno.flat();
-
-        const consultasTreinador = todasConsultas.filter(
-          (consulta) =>
-            Number(consulta.codtreinador) === Number(codtreinador) &&
-            consulta.status === "agendada",
-        );
-
-        const consultasComAluno = consultasTreinador.map((consulta) => {
-          const aluno = alunos.find(
-            (item) => Number(item.codusuario) === Number(consulta.codusuario),
-          );
-
-          return {
-            ...consulta,
-            nome: aluno?.nome || "Aluno",
-          };
-        });
-
-        consultasComAluno.sort((a, b) => {
-          const dataA = new Date(
-            `${String(a.dataconsulta).split("T")[0]}T${
-              a.horaconsulta || "00:00:00"
-            }`,
-          );
-
-          const dataB = new Date(
-            `${String(b.dataconsulta).split("T")[0]}T${
-              b.horaconsulta || "00:00:00"
-            }`,
-          );
-
-          return dataA - dataB;
-        });
-
-        setData({
-          consultas: consultasComAluno,
-        });
-      } catch (error) {
-        console.error("Erro ao mostrar consultas:", error);
-      }
-    };
+    setData({
+      consultas: consultasFisioterapeuta,
+    });
+  } catch (error) {
+    console.error("Erro ao mostrar consultas:", error);
+  }
+};
 
     pegarConsultas();
   }, [codtreinador]);

@@ -7,7 +7,7 @@ import styles from "./top.module.css";
 
 const TITULOS = {
   pacientes: "Pacientes",
-  pacientesTreinador: "Pacientes",
+  pacientesTreinador: "Alunos",
   paciFisio: "Pacientes",
   alunos: "Alunos",
   calendario: "Calendário",
@@ -96,7 +96,7 @@ export default function Top() {
         <button
           type="button"
           className={styles.sair}
-          onClick={() => signOut()}
+          onClick={() => signOut({ callbackUrl: "/front/login" })}
         >
           Sair
         </button>

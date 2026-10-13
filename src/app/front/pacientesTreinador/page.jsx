@@ -76,14 +76,14 @@ export default function Pacientes() {
         <main className={styles.container}>
           <div className={styles.headerPacientes}>
             <div>
-              <h1 className={styles.titulo}>Pacientes</h1>
+              <h1 className={styles.titulo}>Alunos</h1>
               <p className={styles.contadorPacientes} aria-live="polite">
                 {carregando
                   ? "Carregando pacientes..."
                   : `${pacientesFiltrados.length} ${
                       pacientesFiltrados.length === 1
-                        ? "paciente encontrado"
-                        : "pacientes encontrados"
+                        ? "aluno encontrado"
+                        : "alunos encontrados"
                     }`}
               </p>
             </div>
