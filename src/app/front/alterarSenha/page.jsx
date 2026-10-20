@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
-export default function AlterarSenha() {
+function AlterarSenhaForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -65,45 +65,47 @@ export default function AlterarSenha() {
   };
 
   return (
+    <div className={styles.caixa}>
+      <h1>Criar nova senha</h1>
+
+      <p>Digite sua nova senha abaixo.</p>
+
+      <form onSubmit={criarSenha} className={styles.form}>
+        <label className={styles.label}>Nova senha</label>
+
+        <input
+          type="password"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          placeholder="Digite sua nova senha"
+        />
+
+        <label className={styles.label}>Confirmar senha</label>
+
+        <input
+          type="password"
+          value={confirmarSenha}
+          onChange={(e) => setConfirmarSenha(e.target.value)}
+          placeholder="Digite novamente sua senha"
+          className={styles.input}
+        />
+
+        <button type="submit" className={styles.button}>
+          Criar nova senha
+        </button>
+      </form>
+
+      {mensagem && <p className={styles.mensagem}>{mensagem}</p>}
+    </div>
+  );
+}
+
+export default function AlterarSenha() {
+  return (
     <main className={styles.container}>
-      <div className={styles.caixa}>
-        <h1>Criar nova senha</h1>
-
-        <p>
-          Digite sua nova senha abaixo.
-        </p>
-
-        <form onSubmit={criarSenha} className={styles.form}>
-          <label className={styles.label}>Nova senha</label>
-
-          <input
-            type="password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            placeholder="Digite sua nova senha"
-          />
-
-          <label className={styles.label}>Confirmar senha</label>
-
-          <input
-            type="password"
-            value={confirmarSenha}
-            onChange={(e) => setConfirmarSenha(e.target.value)}
-            placeholder="Digite novamente sua senha"
-            className={styles.input}
-          />
-
-          <button type="submit" className={styles.button}>
-            Criar nova senha
-          </button>
-        </form>
-
-        {mensagem && (
-          <p className={styles.mensagem}>
-            {mensagem}
-          </p>
-        )}
-      </div>
+      <Suspense fallback={<div className={styles.caixa}>Carregando formulário...</div>}>
+        <AlterarSenhaForm />
+      </Suspense>
     </main>
   );
 }
