@@ -126,7 +126,6 @@ export default function AddFotos() {
 
     try {
       //SALVAR AS FOTOS
-
       for (const [angulo, arquivo] of Object.entries(fotos)) {
         if (!arquivo) continue;
 
@@ -154,7 +153,6 @@ export default function AddFotos() {
 
       }
       //SALVAR A AVALIAÇÃO
-
       const payload = {
         codusuario: pacienteId,
         dataAvaliacao,

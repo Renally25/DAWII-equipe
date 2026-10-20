@@ -45,7 +45,7 @@
 
 .submarca {
   margin: 2px 0 0;
-  font-size: 13px; /* antes 14px com h6, que ficava ilegível */
+  font-size: 13px; 
   color: var(--areia);
 }
 

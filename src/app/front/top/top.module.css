@@ -1,4 +1,3 @@
-/* Removido "width: 1670" (valor inválido sem unidade); o flex já preenche a largura */
 .top {
   display: flex;
   align-items: center;
@@ -32,7 +31,7 @@
   flex-shrink: 0;
   border-radius: 50%;
   object-fit: cover;
-  background-color: var(--musgo-claro); /* antes: azul #4f5d75 */
+  background-color: var(--musgo-claro); 
   border: 2px solid var(--papel);
 }
 
@@ -49,7 +48,6 @@
   color: var(--texto);
 }
 
-/* Antes: opacity 0.6 e "font-size: 14" (inválido). Agora cor sólida com contraste. */
 .prof {
   margin: 0;
   font-size: 14px;

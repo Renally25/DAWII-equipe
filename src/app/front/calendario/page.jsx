@@ -18,13 +18,6 @@ const ROTULO_STATUS = {
   realizada: "Realizada",
 };
 
-/*
- * Aceita os dois formatos de consulta:
- *  - o que este componente já esperava: { id, date, time, patient }
- *  - o que a API devolve nos dashboards: { codconsulta, dataconsulta,
- *    horaconsulta, observacoes, status }
- * Sem isso, as consultas da API não apareciam nas células do calendário.
- */
 function normalizarConsulta(consulta) {
   return {
     id: consulta.id ?? consulta.codconsulta,
@@ -47,7 +40,6 @@ function jaOcorreu(consulta) {
   return new Date(ano, mes - 1, dia, hora, minuto) <= new Date();
 }
 
-// Renomeado de "pagCalendario": componentes React começam com maiúscula
 export default function PagCalendario() {
   const { data: session, status } = useSession();
 

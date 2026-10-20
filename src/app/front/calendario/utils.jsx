@@ -25,11 +25,6 @@ export function isSameDay(date1, date2) {
   );
 }
 
-/*
- * Chave "AAAA-MM-DD" no fuso LOCAL.
- * (day.toISOString() converte para UTC e pode cair no dia errado,
- * dependendo do fuso do navegador.)
- */
 export function chaveDia(date) {
   const ano = date.getFullYear();
   const mes = String(date.getMonth() + 1).padStart(2, "0");

@@ -14,8 +14,6 @@ import cardsStyles from "./cards.module.css";
 import alertasStyles from "./alertas.module.css";
 import diariosStyles from "./diariosRecentes.module.css";
 
-// Lê "2026-06-26" ou "2026-06-26T00:00:00" como data LOCAL.
-// (new Date("2026-06-26") interpreta como UTC e pode mostrar o dia anterior.)
 function lerData(valor) {
   if (!valor) return null;
   const [ano, mes, dia] = String(valor).split("T")[0].split("-").map(Number);
@@ -259,7 +257,6 @@ function Cards({ codpsicologo }) {
     buscarDados();
   }, [codpsicologo]);
 
-  // Cada indicador leva para a tela do assunto; o zero ganha um texto útil
   const itens = [
     {
       href: "./pacientes",

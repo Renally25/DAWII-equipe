@@ -32,7 +32,6 @@ export default function TelaTreino() {
     duracao: "",
   });
 
-  // Mensagens na tela no lugar dos alert()
   const [aviso, setAviso] = useState(null); // { tipo: "erro" | "sucesso", texto }
   const [erroTreino, setErroTreino] = useState("");
 

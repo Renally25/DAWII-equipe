@@ -83,7 +83,6 @@
   margin: 0;
 }
 
-/* Cada dado vira uma "pastilha" com rótulo em cima e valor embaixo */
 .stat {
   min-width: 120px;
   padding: 10px 16px;

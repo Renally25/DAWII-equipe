@@ -4,7 +4,6 @@ import styles from "./CardExercicio.module.css";
 import { Pencil, Trash2, Dumbbell } from "lucide-react";
 
 export default function CardExercicio({ exercicio, onEditar, onExcluir }) {
-  // peso null/0 aparecia como " kg"; agora mostra "Sem carga"
   const temCarga = exercicio.peso !== null && exercicio.peso !== undefined && Number(exercicio.peso) > 0;
 
   return (
@@ -55,7 +54,6 @@ export default function CardExercicio({ exercicio, onEditar, onExcluir }) {
           </dd>
         </div>
 
-        {/* O bloco de descanso continua removido, como no seu código original */}
       </dl>
     </article>
   );

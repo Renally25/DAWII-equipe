@@ -137,7 +137,7 @@ export default function ModalExercicio({
       }
 
       await atualizar();
-      fechar(); // o card novo/atualizado aparecendo na lista já confirma o salvamento
+      fechar(); 
     } catch (err) {
       console.error("Erro ao salvar:", err);
       setErro(`Erro ao salvar exercício: ${err.message}`);

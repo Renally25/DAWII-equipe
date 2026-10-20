@@ -50,8 +50,6 @@ const ICONES = {
   generico: <circle cx="12" cy="12" r="4" />,
 };
 
-// Ícone escolhido pelo RÓTULO do item (funciona para todos os perfis do profiles.js,
-// mesmo com rotas diferentes como /pacientesTreinador e /paciFisio).
 const ICONE_POR_ROTULO = [
   [/vis[ãa]o geral/i, "home"],
   [/paciente|aluno/i, "pessoas"],
@@ -60,8 +58,6 @@ const ICONE_POR_ROTULO = [
   [/configura/i, "ajustes"],
 ];
 
-// Páginas de lista de pacientes de cada perfil; o prontuário (/prontuario/100)
-// faz o item "Pacientes" do perfil acender.
 const PAGINAS_PACIENTES = ["pacientes", "pacientesTreinador", "paciFisio"];
 
 function ultimoTrecho(caminho) {

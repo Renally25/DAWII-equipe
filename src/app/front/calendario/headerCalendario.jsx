@@ -19,14 +19,12 @@ function Chevron({ direcao }) {
 }
 
 export default function HeaderCalendario({ currentMonth, setCurrentMonth }) {
-  // "agosto de 2026" → "Agosto de 2026" (o text-transform: capitalize gerava "Agosto De 2026")
   const rotulo = currentMonth.toLocaleDateString("pt-BR", {
     month: "long",
     year: "numeric",
   });
   const rotuloMes = rotulo.charAt(0).toUpperCase() + rotulo.slice(1);
 
-  // Sempre dia 1: evita pular meses quando hoje é dia 29, 30 ou 31
   function mudarMes(delta) {
     setCurrentMonth(
       new Date(currentMonth.getFullYear(), currentMonth.getMonth() + delta, 1),
