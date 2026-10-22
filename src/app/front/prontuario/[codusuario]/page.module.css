@@ -42,11 +42,6 @@
   border-radius: 4px;
 }
 
-.voltar svg {
-  width: 16px;
-  height: 16px;
-}
-
 .titulo {
   margin: 0;
   font-family: var(--fonte-titulo);

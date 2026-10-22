@@ -102,6 +102,7 @@ export default function Pacientes() {
                   <th scope="col">Paciente</th>
                   <th scope="col">CPF</th>
                   <th scope="col">Código</th>
+                  <th scope="col">Anamnese</th>
                   <th scope="col" aria-label="Abrir prontuário" />
                 </tr>
               </thead>
@@ -145,6 +146,18 @@ export default function Pacientes() {
                             Aluno-paciente
                           </span>
                         </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.acoes}>
+                        <Link
+                          href={`./anamnese/${paci.codusuario}`}
+                          className={styles.botaoAcao}
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`Ver anamnese de ${paci.nome}`}
+                        >
+                          Anamnese
+                        </Link>
                       </div>
                     </td>
                     <td className={styles.cpf}>{mascararCpf(paci.cpf)}</td>

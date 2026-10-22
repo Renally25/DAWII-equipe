@@ -6,7 +6,6 @@ import { profiles } from "../../sidebar/profiles";
 import Top from "../../top/top";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft } from "@deemlol/next-icons";
 
 export default function AddFotos() {
   const params = useParams();
@@ -150,7 +149,6 @@ export default function AddFotos() {
             resultado.error || `Erro ao salvar a foto ${angulo}.`,
           );
         }
-
       }
       //SALVAR A AVALIAÇÃO
       const payload = {
@@ -159,13 +157,16 @@ export default function AddFotos() {
         medidas,
       };
 
-      const avaliacaoResponse = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/api/AvaliacaoAntropometrica`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const avaliacaoResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/AvaliacaoAntropometrica`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload),
-      });
+      );
 
       const avaliacaoTexto = await avaliacaoResponse.text();
 
@@ -207,14 +208,18 @@ export default function AddFotos() {
     <div className={styles.dashboard}>
       <Sidebar profile={profiles.treinador} />
 
-      <div>
+      <div className={styles.mainContent}>
         <Top />
 
         <div className={styles.container}>
+          <button
+            type="button"
+            className={styles.voltar}
+            onClick={() => router.back()}
+          >
+            ← Voltar
+          </button>
           <div className={styles.header}>
-            <button className={styles.btnVoltar} onClick={() => router.back()}>
-              <ArrowLeft size={40} color="#050505" strokeWidth={2} />
-            </button>
             <h2>Avaliação Antropométrica e Fotos</h2>
           </div>
           <p className={styles.subtitulo}>Paciente ID:{pacienteId}</p>

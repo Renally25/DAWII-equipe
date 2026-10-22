@@ -125,7 +125,6 @@ export default function Pacientes() {
                   >
                     <td>
                       <div className={styles.colunaPaciente}>
-    
                         <div className={styles.avatar} aria-hidden="true">
                           {paci.fotoperfil ? (
                             <img src={paci.fotoperfil} alt="" />
@@ -145,6 +144,18 @@ export default function Pacientes() {
                             Aluno-paciente
                           </span>
                         </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.acoes}>
+                        <Link
+                          href={`./anamnese/${paci.codusuario}`}
+                          className={styles.botaoAcao}
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`Ver anamnese de ${paci.nome}`}
+                        >
+                          Anamnese
+                        </Link>
                       </div>
                     </td>
                     <td className={styles.cpf}>{mascararCpf(paci.cpf)}</td>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Sidebar from "../../sidebar/sidebar";
 import Top from "../../top/top";
 import PainelPaciente from "./PainelPaciente";
@@ -11,7 +11,9 @@ import ModalExercicio from "./ModalExercicio";
 import { profiles } from "../../sidebar/profiles";
 import styles from "./treino.module.css";
 
+
 export default function TelaTreino() {
+  const router = useRouter();
   const params = useParams();
   const codusuario = params.codusuario;
   const [paciente, setPaciente] = useState(null);
@@ -210,7 +212,10 @@ export default function TelaTreino() {
       setAviso({ tipo: "sucesso", texto: "Exercício excluído com sucesso." });
     } catch (err) {
       console.log("Erro ao excluir exercício:", err);
-      setAviso({ tipo: "erro", texto: "Não foi possível excluir o exercício." });
+      setAviso({
+        tipo: "erro",
+        texto: "Não foi possível excluir o exercício.",
+      });
     }
   }
 
@@ -247,8 +252,15 @@ export default function TelaTreino() {
             {aviso.texto}
           </p>
         )}
-
+          <button
+            type="button"
+            className={styles.voltar}
+            onClick={() => router.back()}
+          >
+            ← Voltar
+          </button>
         <div className={styles.container}>
+
           <div className={styles.left}>
             <PainelPaciente paciente={paciente} />
             <ListaTreinos

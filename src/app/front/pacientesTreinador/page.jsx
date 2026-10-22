@@ -102,13 +102,14 @@ export default function Pacientes() {
                   <th scope="col">Paciente</th>
                   <th scope="col">CPF</th>
                   <th scope="col">Código</th>
+                  <th scope="col">Ações</th>
                   <th scope="col" aria-label="Abrir treino" />
                 </tr>
               </thead>
               <tbody>
                 {!carregando && pacientesFiltrados.length === 0 && (
                   <tr>
-                    <td colSpan={4} className={styles.vazio}>
+                    <td colSpan={5} className={styles.vazio}>
                       Nenhum paciente encontrado. Tente outro nome, CPF ou
                       código.
                     </td>
@@ -119,13 +120,10 @@ export default function Pacientes() {
                   <tr
                     key={paci.codusuario || index}
                     className={styles.linha}
-                    onClick={() =>
-                      router.push(`./treino/${paci.codusuario}`)
-                    }
+                    onClick={() => router.push(`./treino/${paci.codusuario}`)}
                   >
                     <td>
                       <div className={styles.colunaPaciente}>
-    
                         <div className={styles.avatar} aria-hidden="true">
                           {paci.fotoperfil ? (
                             <img src={paci.fotoperfil} alt="" />
@@ -150,6 +148,26 @@ export default function Pacientes() {
                     <td className={styles.cpf}>{mascararCpf(paci.cpf)}</td>
                     <td>
                       <div className={styles.sessaoData}>{paci.codusuario}</div>
+                    </td>
+                    <td>
+                      <div className={styles.acoes}>
+                        <Link
+                          href={`./addFotos/${paci.codusuario}`}
+                          className={styles.botaoAcao}
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`Adicionar fotos de ${paci.nome}`}
+                        >
+                          Fotos
+                        </Link>
+                        <Link
+                          href={`./anamnese/${paci.codusuario}`}
+                          className={styles.botaoAcao}
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`Ver anamnese de ${paci.nome}`}
+                        >
+                          Anamnese
+                        </Link>
+                      </div>
                     </td>
                     <td className={styles.colunaSeta}>
                       <Seta />

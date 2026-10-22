@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Sidebar from "../../sidebar/sidebar";
 import Top from "../../top/top";
@@ -15,6 +15,7 @@ import styles from "../../treino/[codusuario]/treino.module.css";
 export default function TelaProtocolo() {
   const params = useParams();
   const codusuario = params.codusuario;
+  const router = useRouter();
 
   const { data: session } = useSession();
 
@@ -238,7 +239,10 @@ export default function TelaProtocolo() {
     } catch (err) {
       console.log("Erro ao excluir exercício:", err);
 
-      setAviso({ tipo: "erro", texto: "Não foi possível excluir o exercício." });
+      setAviso({
+        tipo: "erro",
+        texto: "Não foi possível excluir o exercício.",
+      });
     }
   }
 
@@ -277,7 +281,13 @@ export default function TelaProtocolo() {
             {aviso.texto}
           </p>
         )}
-
+        <button
+          type="button"
+          className={styles.voltar}
+          onClick={() => router.back()}
+        >
+          ← Voltar
+        </button>
         <div className={styles.container}>
           <div className={styles.left}>
             <PainelPaciente paciente={paciente} />

@@ -1,0 +1,152 @@
+.dashboardLayout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  background-color: var(--areia);
+  color: var(--texto);
+}
+
+.conteudoPrincipal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+}
+
+.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--oliva);
+  text-decoration: none;
+}
+
+.voltar:hover {
+  text-decoration: underline;
+}
+
+.voltar:focus-visible {
+  outline: 3px solid var(--musgo);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.titulo {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--texto);
+}
+
+.subtitulo {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--texto);
+}
+
+.mensagem {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--texto-suave);
+  background: var(--papel);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-card);
+}
+
+.card {
+  padding: 20px 24px;
+  background: var(--papel);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-card);
+  box-shadow: var(--sombra-card);
+}
+
+.tituloSecao {
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--borda);
+  font-family: var(--fonte-titulo);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px 24px;
+  margin: 0;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.campoLongo {
+  grid-column: 1 / -1;
+}
+
+.rotulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.valor {
+  margin: 0;
+  font-size: 14px;
+  color: var(--texto);
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.detalhe {
+  margin: 6px 0 0;
+  padding: 8px 12px;
+  background: var(--papel-claro);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.badgeSim,
+.badgeNao {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badgeSim {
+  background: var(--musgo-claro);
+  color: var(--oliva);
+}
+
+.badgeNao {
+  background: var(--papel-claro);
+  color: var(--texto-suave);
+  border: 1px solid var(--borda);
+}
+
+.lgpd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--texto-suave);
+}

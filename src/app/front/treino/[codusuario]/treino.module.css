@@ -239,3 +239,23 @@
     transition: none;
   }
 }
+
+.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--oliva);
+  text-decoration: none;
+}
+
+.voltar:hover {
+  text-decoration: underline;
+}
+
+.voltar:focus-visible {
+  outline: 3px solid var(--musgo);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
