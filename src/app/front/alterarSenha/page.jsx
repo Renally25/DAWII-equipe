@@ -66,36 +66,59 @@ function AlterarSenhaForm() {
 
   return (
     <div className={styles.caixa}>
-      <h1>Criar nova senha</h1>
+      <div className={styles.logoWrapper}>
+        <img src="/logo.png" alt="Raggio" className={styles.logo} />
+      </div>
 
-      <p>Digite sua nova senha abaixo.</p>
+      <div className={styles.cabecalho}>
+        <span className={styles.etiqueta}>Segurança da conta</span>
+        <h1>Criar nova senha</h1>
+        <p>Escolha uma senha nova para voltar a acessar sua conta.</p>
+      </div>
 
       <form onSubmit={criarSenha} className={styles.form}>
-        <label className={styles.label}>Nova senha</label>
+        <div className={styles.camposInput}>
+          <label htmlFor="senha" className={styles.label}>Nova senha</label>
 
-        <input
-          type="password"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          placeholder="Digite sua nova senha"
-        />
+          <input
+            id="senha"
+            className={styles.input}
+            type="password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            placeholder="Digite sua nova senha"
+            autoComplete="new-password"
+            minLength={6}
+            required
+          />
+        </div>
 
-        <label className={styles.label}>Confirmar senha</label>
+        <div className={styles.camposInput}>
+          <label htmlFor="confirmarSenha" className={styles.label}>Confirmar senha</label>
 
-        <input
-          type="password"
-          value={confirmarSenha}
-          onChange={(e) => setConfirmarSenha(e.target.value)}
-          placeholder="Digite novamente sua senha"
-          className={styles.input}
-        />
+          <input
+            id="confirmarSenha"
+            type="password"
+            value={confirmarSenha}
+            onChange={(e) => setConfirmarSenha(e.target.value)}
+            placeholder="Digite novamente sua senha"
+            className={styles.input}
+            autoComplete="new-password"
+            minLength={6}
+            required
+          />
+        </div>
 
         <button type="submit" className={styles.button}>
           Criar nova senha
         </button>
       </form>
 
-      {mensagem && <p className={styles.mensagem}>{mensagem}</p>}
+      {mensagem && (
+        <p className={styles.mensagem} role="alert">
+          {mensagem}
+        </p>
+      )}
     </div>
   );
 }
@@ -103,7 +126,13 @@ function AlterarSenhaForm() {
 export default function AlterarSenha() {
   return (
     <main className={styles.container}>
-      <Suspense fallback={<div className={styles.caixa}>Carregando formulário...</div>}>
+      <Suspense
+        fallback={
+          <div className={styles.caixa}>
+            <p className={styles.carregando}>Carregando formulário...</p>
+          </div>
+        }
+      >
         <AlterarSenhaForm />
       </Suspense>
     </main>

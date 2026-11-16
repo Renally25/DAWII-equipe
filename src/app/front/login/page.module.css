@@ -81,10 +81,40 @@
 .button:active {
   transform: scale(0.98);
 }
+
+.linkRedefinicao {
+  align-self: flex-end;
+  margin-top: -12px;
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: #3b4231;
+  font: inherit;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.linkRedefinicao:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .errorMessage {
   background-color: #ffebe9;
   color: #ff3b30;
   border: 1px solid #ffc1bd;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.successMessage {
+  background-color: #edf7ed;
+  color: #2e6b35;
+  border: 1px solid #b7dfb9;
   padding: 12px;
   border-radius: 6px;
   font-size: 14px;

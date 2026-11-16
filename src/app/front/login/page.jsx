@@ -14,12 +14,15 @@ export default function LoginPage() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [mensagemSenha, setMensagemSenha] = useState(null);
+  const [enviandoRedefinicao, setEnviandoRedefinicao] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setIsLoading(true);
     setError("");
+    setMensagemSenha(null);
 
     const res = await signIn("credentials", {
       email,
@@ -48,6 +51,60 @@ export default function LoginPage() {
     } else {
       setError("Tipo de usuário não encontrado");
       setIsLoading(false);
+    }
+  };
+
+  const solicitarRedefinicao = async () => {
+    setError("");
+
+    if (!email.trim()) {
+      setMensagemSenha({
+        tipo: "erro",
+        texto: "Digite seu e-mail para receber o link de redefinição.",
+      });
+      return;
+    }
+
+    setEnviandoRedefinicao(true);
+    setMensagemSenha(null);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_API}/api/Usuario`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            acao: "solicitarRedefinicao",
+            email: email.trim(),
+          }),
+        },
+      );
+
+      const resultado = await response.json();
+
+      if (!response.ok) {
+        setMensagemSenha({
+          tipo: "erro",
+          texto: resultado.error || "Não foi possível enviar o e-mail.",
+        });
+        return;
+      }
+
+      setMensagemSenha({
+        tipo: "sucesso",
+        texto: "Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha.",
+      });
+    } catch (error) {
+      console.error(error);
+      setMensagemSenha({
+        tipo: "erro",
+        texto: "Erro ao conectar com o servidor. Tente novamente.",
+      });
+    } finally {
+      setEnviandoRedefinicao(false);
     }
   };
 
@@ -110,6 +167,28 @@ export default function LoginPage() {
               </button>
             </div>
           </div>
+
+          <button
+            type="button"
+            className={styles.linkRedefinicao}
+            onClick={solicitarRedefinicao}
+            disabled={enviandoRedefinicao || isLoading}
+          >
+            {enviandoRedefinicao ? "Enviando..." : "Esqueceu a senha?"}
+          </button>
+
+          {mensagemSenha && (
+            <div
+              role={mensagemSenha.tipo === "erro" ? "alert" : "status"}
+              className={
+                mensagemSenha.tipo === "erro"
+                  ? styles.errorMessage
+                  : styles.successMessage
+              }
+            >
+              {mensagemSenha.texto}
+            </div>
+          )}
 
           <button type="submit" className={styles.button} disabled={isLoading}>
             {isLoading ? "Carregando..." : "Entrar"}
