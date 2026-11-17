@@ -5,6 +5,7 @@
   min-height: 100vh;
   background: #d5cdb8;
   padding: 20px;
+  font-family: var(--fonte-titulo);
 }
 
 .card {
